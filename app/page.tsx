@@ -3,6 +3,7 @@
 import Map, { Marker } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useState } from "react";
+import { createMockCoords } from "./mock-coords";
 
 interface Geolocation {
   latitude: number;
@@ -10,7 +11,7 @@ interface Geolocation {
   accuracy?: number;
 }
 
-const NYC_GEOLOC: Geolocation = { longitude: -73.935242, latitude: 40.73061 };
+// const NYC_GEOLOC: Geolocation = { longitude: -73.935242, latitude: 40.73061 };
 
 export default function Home() {
   const [currentGeoLoc, setCurrentGeoLoc] = useState<
@@ -47,8 +48,18 @@ export default function Home() {
               latitude={currentGeoLoc.latitude}
               anchor="center"
             >
-              <div className="h-5 w-5 rounded-full border-4 border-red-500" />
+              <div className="h-6 w-6 rounded-full border-4 border-red-500" />
             </Marker>
+            {createMockCoords(currentGeoLoc, 0.002).map((e, i) => (
+              <Marker
+                key={`mockLoc${i}`}
+                longitude={e.longitude}
+                latitude={e.latitude}
+                anchor="center"
+              >
+                <div className="h-4 w-4 rounded-full border-4 border-blue-800" />
+              </Marker>
+            ))}
           </Map>
         ) : (
           <MapLoading text="Invasively finding your location..." />
