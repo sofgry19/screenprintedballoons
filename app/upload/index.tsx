@@ -34,7 +34,6 @@ export const UploadPage = () => {
           )}
         </div>
         <form
-          action={(data: FormData) => {}}
           onSubmit={(e) => {
             e.preventDefault();
             // Submit button is disabled if currentCoords aren't found
@@ -75,13 +74,13 @@ export const UploadPage = () => {
 
                 setIsLoadingImg(true);
 
-                const data = new FormData();
-                data.set("file", file);
+                // const data = new FormData();
+                // data.set("file", file);
 
-                await fetch("api/files", {
-                  method: "POST",
-                  body: data,
-                });
+                // await fetch("api/files", {
+                //   method: "POST",
+                //   body: data,
+                // });
 
                 const reader = new FileReader();
                 reader.onload = function () {
@@ -97,6 +96,7 @@ export const UploadPage = () => {
             <button
               className="w-full rounded-md p-4 bg-blue-500 text-white disabled:bg-slate-300 disabled:text-slate-400"
               disabled={isLoadingImg}
+              type="button"
               onClick={() => {
                 fileInputRef.current?.click();
               }}
