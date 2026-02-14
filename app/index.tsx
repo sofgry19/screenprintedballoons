@@ -1,23 +1,23 @@
 "use client";
 
-import { Ref, useEffect, useRef, useState } from "react";
-import { GeoCoords } from "./types";
+import { Ref, Suspense, use, useEffect, useRef, useState } from "react";
+import { GeoCoords, HomePageParams } from "./types";
 import Map, { GeolocateControl, Marker, useMap } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { createMockCoords } from "./mock-coords";
-import { useSearchParams } from "next/navigation";
 
 const NYC_COORDS: GeoCoords = { longitude: -73.935242, latitude: 40.73061 };
 
-export const HomePage = () => {
-  const searchParams = useSearchParams();
+export const HomePage = ({
+  searchParams,
+}: {
+  searchParams: Promise<HomePageParams>;
+}) => {
+  const params = use(searchParams);
+  console.log(params);
   const [initCoords, setInitCoords] = useState<GeoCoords>({
-    longitude: searchParams.get("lng")
-      ? Number(searchParams.get("lng"))
-      : NYC_COORDS.longitude,
-    latitude: searchParams.get("lat")
-      ? Number(searchParams.get("lat"))
-      : NYC_COORDS.latitude,
+    longitude: params.lng ? Number(params.lng) : NYC_COORDS.longitude,
+    latitude: params.lat ? Number(params.lat) : NYC_COORDS.latitude,
   });
 
   const goHomeRef = useRef<HTMLDivElement>(null);
@@ -28,29 +28,31 @@ export const HomePage = () => {
         Screen Printed Balloons!
       </div>
       <div className="flex-1 flex justify-center items-center h-[500px] w-full overflow-hidden">
-        <Map
-          initialViewState={{
-            longitude: initCoords.longitude,
-            latitude: initCoords.latitude,
-            zoom: 16,
-          }}
-          minZoom={10}
-          maxZoom={20}
-          mapStyle="https://api.maptiler.com/maps/streets/style.json?key=wj2xyR5KXFoBWjTtFjY7"
-        >
-          {createMockCoords(initCoords, 0.002).map((e, i) => (
-            <Marker
-              key={`mockLoc${i}`}
-              longitude={e.longitude}
-              latitude={e.latitude}
-              anchor="center"
-            >
-              <div className="h-7 w-7 rounded-full border-6 border-blue-800" />
-            </Marker>
-          ))}
-          <GeolocateControl position="bottom-left" />
-          <GoHome ref={goHomeRef} />
-        </Map>
+        <Suspense>
+          <Map
+            initialViewState={{
+              longitude: initCoords.longitude,
+              latitude: initCoords.latitude,
+              zoom: 16,
+            }}
+            minZoom={10}
+            maxZoom={20}
+            mapStyle="https://api.maptiler.com/maps/streets/style.json?key=wj2xyR5KXFoBWjTtFjY7"
+          >
+            {createMockCoords(initCoords, 0.002).map((e, i) => (
+              <Marker
+                key={`mockLoc${i}`}
+                longitude={e.longitude}
+                latitude={e.latitude}
+                anchor="center"
+              >
+                <div className="h-7 w-7 rounded-full border-6 border-blue-800" />
+              </Marker>
+            ))}
+            <GeolocateControl position="bottom-left" />
+            <GoHome ref={goHomeRef} />
+          </Map>
+        </Suspense>
       </div>
       <div className="p-4 flex justify-center">
         <button

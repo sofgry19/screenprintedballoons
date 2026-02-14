@@ -1,5 +1,15 @@
+import { Suspense } from "react";
 import { HomePage } from ".";
+import { HomePageParams } from "./types";
 
-const Page = () => <HomePage />;
-
-export default Page;
+export default function Page({
+  searchParams,
+}: {
+  searchParams: Promise<HomePageParams>;
+}) {
+  return (
+    <Suspense fallback={<>...</>}>
+      <HomePage searchParams={searchParams} />
+    </Suspense>
+  );
+}

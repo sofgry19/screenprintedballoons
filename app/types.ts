@@ -9,3 +9,8 @@ export interface MapEntryData {
   coords: GeoCoords;
   timestamp: Date;
 }
+
+export interface HomePageParams {
+  lng?: string;
+  lat?: string;
+}
