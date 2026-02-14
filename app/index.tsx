@@ -5,15 +5,19 @@ import { GeoCoords } from "./types";
 import Map, { GeolocateControl, Marker, useMap } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { createMockCoords } from "./mock-coords";
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 const NYC_COORDS: GeoCoords = { longitude: -73.935242, latitude: 40.73061 };
 
 export const HomePage = () => {
-  const { longitude: param_longitude, latitude: param_latitude } = useParams();
+  const searchParams = useSearchParams();
   const [initCoords, setInitCoords] = useState<GeoCoords>({
-    longitude: param_longitude ? Number(param_longitude) : NYC_COORDS.longitude,
-    latitude: param_latitude ? Number(param_latitude) : NYC_COORDS.latitude,
+    longitude: searchParams.get("lng")
+      ? Number(searchParams.get("lng"))
+      : NYC_COORDS.longitude,
+    latitude: searchParams.get("lat")
+      ? Number(searchParams.get("lat"))
+      : NYC_COORDS.latitude,
   });
 
   const goHomeRef = useRef<HTMLDivElement>(null);
