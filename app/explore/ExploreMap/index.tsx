@@ -1,10 +1,10 @@
 import { Ref, Suspense, useEffect, useState } from "react";
 import Map, { useMap } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { createMockCoords } from "../mock-data";
-import { MOCK_ENTRIES } from "../mock-data";
+import { createMockCoords } from "../../mock-data";
+import { MOCK_ENTRIES } from "../../mock-data";
 import { BalloonMarker } from "./BalloonMarker";
-import { GeoCoords, MapEntryData } from "../types";
+import { GeoCoords, MapEntryData } from "../../types";
 
 export const ExploreMap = ({
   initCoords,

@@ -1,7 +1,7 @@
 "use client";
 
 import { use, useRef, useState } from "react";
-import { GeoCoords, HomePageParams, MapEntryData } from "./types";
+import { GeoCoords, HomePageParams, MapEntryData } from "../types";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { ExploreMap } from "./ExploreMap";
 
@@ -56,7 +56,6 @@ export const HomePage = ({
     </div>
   );
 };
-
 
 const MapEntryModal = ({
   entryData,

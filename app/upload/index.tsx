@@ -134,7 +134,7 @@ const SuccessModal = ({ entryData }: { entryData: MapEntryData }) => (
         {"Fake upload success! Now go see everyone else's photos!"}
       </div>
       <Link
-        href={`/?lng=${entryData.coords.longitude}&lat=${entryData.coords.latitude}`}
+        href={`/explore/?lng=${entryData.coords.longitude}&lat=${entryData.coords.latitude}`}
         className="w-min rounded-md p-4 bg-blue-500 text-white disabled:bg-slate-300 disabled:text-slate-400 whitespace-nowrap"
       >
         {"Go to Map"}

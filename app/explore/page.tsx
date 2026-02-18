@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { HomePage } from ".";
-import { HomePageParams } from "./types";
+import { HomePageParams } from "../types";
 
 export default function Page({
   searchParams,
