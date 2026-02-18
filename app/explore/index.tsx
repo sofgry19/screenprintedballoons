@@ -1,9 +1,13 @@
 "use client";
 
+import "maplibre-gl/dist/maplibre-gl.css";
 import { use, useRef, useState } from "react";
 import { GeoCoords, HomePageParams, MapEntryData } from "../types";
-import "maplibre-gl/dist/maplibre-gl.css";
 import { ExploreMap } from "./ExploreMap";
+import { MapEntryModal } from "./MapEntryModal";
+
+// TO DO:
+// - Account for movable toolbar spacing on mobile
 
 const NYC_COORDS: GeoCoords = { longitude: -73.935242, latitude: 40.73061 };
 
@@ -20,7 +24,6 @@ export const HomePage = ({
   const [currentEntry, setCurrentEntry] = useState<MapEntryData | undefined>(
     undefined,
   );
-
   const goHomeRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -56,24 +59,3 @@ export const HomePage = ({
     </div>
   );
 };
-
-const MapEntryModal = ({
-  entryData,
-  onBgClick,
-}: {
-  entryData: MapEntryData;
-  onBgClick?: () => void;
-}) => (
-  <div
-    className="z-100 absolute h-screen w-screen bg-[rgba(0,0,0,0.5)]"
-    onClick={() => onBgClick?.()}
-  >
-    <div className="absolute left-1/2 top-1/2 -translate-1/2 p-4 rounded-xl flex flex-col gap-y-4 items-center bg-blue-50 text-black">
-      <img className="rounded-xl" src={entryData.img_url} alt="" />
-      <div className="w-full flex justify-between font-bold">
-        <div className="text-slate-900">{entryData.name}</div>
-        <div className="text-slate-400">{`${entryData.timestamp.toLocaleDateString()}`}</div>
-      </div>
-    </div>
-  </div>
-);
