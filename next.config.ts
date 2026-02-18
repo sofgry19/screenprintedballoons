@@ -1,9 +1,17 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: process.env.SUPABASE_URL!,
+        port: "",
+      },
+    ],
+  },
   async redirects() {
     return [
-      // Basic redirect
       {
         source: "/",
         destination: "/explore",

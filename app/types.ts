@@ -5,9 +5,8 @@ export interface GeoCoords {
 
 export interface MapEntryData {
   name?: string;
-  img_url: string;
+  photo_url: string;
   coords: GeoCoords;
-  timestamp: Date;
 }
 
 export interface HomePageParams {
