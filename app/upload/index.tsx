@@ -5,6 +5,7 @@ import { GeoCoords, MapEntryData } from "../types";
 import Link from "next/link";
 import { uploadImage } from "../supabase/storage/client";
 import { convertBlobUrlToFile, getGeolocation } from "../lib/utils";
+import { uploadMapEntry } from "../supabase/client";
 
 export const UploadPage = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -39,22 +40,29 @@ export const UploadPage = () => {
         photo_url: "",
         coords: currentCoords,
       };
-      // Upload image to bucket and get public url
-      console.log(selectedImageUrl);
-      const imageFile = await convertBlobUrlToFile(selectedImageUrl);
 
-      const { imageUrl, error } = await uploadImage({
+      // Upload image to bucket and get public url
+      const imageFile = await convertBlobUrlToFile(selectedImageUrl);
+      const { imageUrl, error: imageUploadError } = await uploadImage({
         file: imageFile,
         bucket: "user-photos",
       });
-      if (error) {
-        console.error(error);
+      if (imageUploadError) {
+        console.error(imageUploadError);
+        return;
+      }
+      entryData.photo_url = imageUrl;
+
+      // Upload map entry to database
+      const { entry, error: entryUploadError } =
+        await uploadMapEntry(entryData);
+      if (entryUploadError) {
+        console.error(entryUploadError);
         return;
       }
 
-      entryData.photo_url = imageUrl;
-
-      console.log(entryData);
+      
+      console.log(entry);
       setFakeSuccess(entryData);
     });
   };
