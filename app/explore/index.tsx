@@ -5,6 +5,7 @@ import { use, useRef, useState } from "react";
 import { GeoCoords, HomePageParams, MapEntryData } from "../types";
 import { ExploreMap } from "./ExploreMap";
 import { MapEntryModal } from "./MapEntryModal";
+import { LinkedIn } from "./LinkedIn";
 
 // TO DO:
 // - Account for movable toolbar spacing on mobile
@@ -27,7 +28,7 @@ export const HomePage = ({
   const goHomeRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-slate-700 overflow-hidden">
+    <div className="h-screen w-screen flex flex-col bg-pink-100 overflow-hidden">
       {currentEntry && (
         <MapEntryModal
           entryData={currentEntry}
@@ -36,8 +37,8 @@ export const HomePage = ({
           }}
         />
       )}
-      <div className="p-2 text-xl lg:text-4xl text-center">
-        Screen Printed Balloons!
+      <div className="p-8 text-xl lg:text-4xl text-center flex justify-evenly items-center">
+        <LinkedIn/>Screen Printed Balloons!<LinkedIn/>
       </div>
       <div className="flex-1 flex justify-center items-center h-[500px] w-full overflow-hidden">
         <ExploreMap
@@ -48,7 +49,7 @@ export const HomePage = ({
       </div>
       <div className="p-4 flex justify-center">
         <button
-          className="text-md py-2 px-4 rounded-full bg-slate-500 cursor-pointer"
+          className="text-md py-2 px-4 rounded-b-lg bg-slate-500 cursor-pointer"
           onClick={() => {
             goHomeRef.current?.click();
           }}
