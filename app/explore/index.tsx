@@ -6,6 +6,7 @@ import { GeoCoords, HomePageParams, MapEntryData } from "../types";
 import { ExploreMap } from "./ExploreMap";
 import { MapEntryModal } from "./MapEntryModal";
 import { LinkedIn } from "./LinkedIn";
+import { Instagram } from "./Instagram";
 
 // TO DO:
 // - Account for movable toolbar spacing on mobile
@@ -38,7 +39,7 @@ export const HomePage = ({
         />
       )}
       <div className="p-8 text-xl lg:text-4xl text-center flex justify-evenly items-center">
-        <LinkedIn/>Screen Printed Balloons!<LinkedIn/>
+        <Instagram/>Screen Printed Balloons!<LinkedIn/>
       </div>
       <div className="flex-1 flex justify-center items-center h-[500px] w-full overflow-hidden">
         <ExploreMap
