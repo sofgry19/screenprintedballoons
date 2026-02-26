@@ -1,23 +1,19 @@
 "use client";
 
 import "maplibre-gl/dist/maplibre-gl.css";
-import { use, useRef, useState } from "react";
-import { GeoCoords, HomePageParams, SubmissionData } from "../types";
+import { use, useEffect, useRef, useState } from "react";
+import { GeoCoords, HomePageParams, LocationData } from "../types";
 import { ExploreMap } from "./ExploreMap";
-import { MapEntryModal } from "./MapEntryModal";
+import { LocationModal } from "./LocationModal";
 import { LinkedIn } from "./LinkedIn";
 import { Instagram } from "./Instagram";
-import { Luckiest_Guy } from "next/font/google";
+import { getLocationData } from "../supabase/client";
+import { FONT_LUCKY } from "../lib/constants";
 
 // TO DO:
 // - Account for movable toolbar spacing on mobile
 
 const NYC_COORDS: GeoCoords = { longitude: -73.935242, latitude: 40.73061 };
-
-const lucky = Luckiest_Guy({
-  weight: "400",
-  subsets: ["latin"],
-});
 
 export const HomePage = ({
   searchParams,
@@ -29,18 +25,28 @@ export const HomePage = ({
     longitude: params.lng ? Number(params.lng) : NYC_COORDS.longitude,
     latitude: params.lat ? Number(params.lat) : NYC_COORDS.latitude,
   });
-  const [currentEntry, setCurrentEntry] = useState<SubmissionData | undefined>(
+  const goHomeRef = useRef<HTMLDivElement>(null);
+
+  const [locData, setLocData] = useState<LocationData[]>();
+  useEffect(() => {
+    async function setupLocations() {
+      const data = await getLocationData();
+      setLocData(data);
+    }
+    setupLocations();
+  }, []);
+
+  const [selectedLoc, setSelectedLoc] = useState<LocationData | undefined>(
     undefined,
   );
-  const goHomeRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className="h-screen w-screen flex flex-col bg-pink-100 overflow-hidden">
-      {currentEntry && (
-        <MapEntryModal
-          data={currentEntry}
+      {selectedLoc && (
+        <LocationModal
+          location={selectedLoc}
           onBgClick={() => {
-            setCurrentEntry(undefined);
+            setSelectedLoc(undefined);
           }}
         />
       )}
@@ -50,14 +56,15 @@ export const HomePage = ({
         }
       >
         <Instagram />
-        <h1 className={lucky.className}>Balloon Map!</h1>
+        <h1 className={FONT_LUCKY.className}>Balloon Map!</h1>
         <LinkedIn />
       </div>
       <div className="flex-1 flex justify-center items-center h-[500px] w-full overflow-hidden">
         <ExploreMap
           initCoords={initCoords}
           goHomeRef={goHomeRef}
-          onMarkerClick={(data: SubmissionData) => setCurrentEntry(data)}
+          onMarkerClick={(data: LocationData) => setSelectedLoc(data)}
+          posters={locData ?? []}
         />
       </div>
       <div className="p-4 flex justify-center items-center">

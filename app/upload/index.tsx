@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
-import { GeoCoords, PosterData, SubmissionData } from "../types";
+import { GeoCoords, LocationData, SubmissionData } from "../types";
 import Link from "next/link";
 import { uploadImage } from "../supabase/storage/client";
 import { convertBlobUrlToFile, getGeolocation } from "../lib/utils";
 import {
-  getPosterData,
-  updatePosterSubmissionCount,
+  getLocationData,
+  updateLocationSubmissionCount,
   uploadSubmission,
 } from "../supabase/client";
 
@@ -41,7 +41,7 @@ export const UploadPage = () => {
 
     startTransition(async () => {
       // Get data of the nearest poster
-      const all_posters = await getPosterData();
+      const all_posters = await getLocationData();
       const nearest_poster = findNearestPoster(currentCoords, all_posters);
 
       // Start building user submission object
@@ -75,7 +75,7 @@ export const UploadPage = () => {
 
       // Update submission_count of poster in database
       const { location_id, error: posterUpdateError } =
-        await updatePosterSubmissionCount({
+        await updateLocationSubmissionCount({
           location_id: nearest_poster.id,
           submission_count: nearest_poster.submission_count + 1,
         });
@@ -190,12 +190,12 @@ const CoordsPill = ({ coords }: { coords?: GeoCoords }) => (
 
 const findNearestPoster = (
   currentCoords: GeoCoords,
-  poster_locations: PosterData[],
-): PosterData => {
+  poster_locations: LocationData[],
+): LocationData => {
   let min_dist = Number.MAX_VALUE;
-  let closest_loc: PosterData = poster_locations[0];
+  let closest_loc: LocationData = poster_locations[0];
 
-  poster_locations.map((loc_data: PosterData) => {
+  poster_locations.map((loc_data: LocationData) => {
     const dist_squared =
       Math.exp(loc_data.longitude - currentCoords.longitude) +
       Math.exp(loc_data.latitude - currentCoords.latitude);

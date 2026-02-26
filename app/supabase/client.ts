@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { PosterData, SubmissionData } from "../types";
+import { LocationData, SubmissionData } from "../types";
 
 export function createSupabaseClient() {
   return createClient(
@@ -8,13 +8,13 @@ export function createSupabaseClient() {
   );
 }
 
-export async function getPosterData(): Promise<PosterData[]> {
+export async function getLocationData(): Promise<LocationData[]> {
   const client = createSupabaseClient();
   const { data } = await client.from("poster-locations").select();
-  return data as PosterData[];
+  return data as LocationData[];
 }
 
-export async function updatePosterSubmissionCount({
+export async function updateLocationSubmissionCount({
   location_id,
   submission_count,
 }: {

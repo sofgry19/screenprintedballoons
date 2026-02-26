@@ -3,7 +3,7 @@ export interface GeoCoords {
   latitude: number;
 }
 
-export interface PosterData {
+export interface LocationData {
   id: number;
   name?: string;
   longitude: number;

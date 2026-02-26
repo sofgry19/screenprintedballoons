@@ -1,17 +1,19 @@
 import "maplibre-gl/dist/maplibre-gl.css";
 import { Ref, Suspense, useEffect, useState } from "react";
 import Map, { useMap } from "react-map-gl/maplibre";
-import { GeoCoords, SubmissionData } from "../../types";
+import { GeoCoords, LocationData } from "../../types";
 import { BalloonMarker } from "./BalloonMarker";
 
 export const ExploreMap = ({
   initCoords,
   onMarkerClick,
   goHomeRef,
+  posters,
 }: {
   initCoords: GeoCoords;
-  onMarkerClick: (data: SubmissionData) => void;
+  onMarkerClick: (data: LocationData) => void;
   goHomeRef: Ref<HTMLDivElement>;
+  posters: LocationData[];
 }) => {
   return (
     <Suspense>
@@ -25,6 +27,17 @@ export const ExploreMap = ({
         maxZoom={20}
         mapStyle={`https://api.maptiler.com/maps/streets/style.json?key=${process.env.NEXT_PUBLIC_MAPTILER_KEY ?? ""}`}
       >
+        {posters.map((e) => (
+          <BalloonMarker
+            key={`poster${e.id}`}
+            longitude={e.longitude}
+            latitude={e.latitude}
+            count={e.submission_count}
+            onClick={() => {
+              onMarkerClick(e);
+            }}
+          />
+        ))}
         <GoHome ref={goHomeRef} />
       </Map>
     </Suspense>
