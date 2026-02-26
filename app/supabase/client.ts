@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { MapEntryData } from "../types";
+import { PosterData, SubmissionData } from "../types";
 
 export function createSupabaseClient() {
   return createClient(
@@ -8,36 +8,52 @@ export function createSupabaseClient() {
   );
 }
 
-export async function uploadMapEntry(entry: MapEntryData) {
+export async function getPosterData(): Promise<PosterData[]> {
   const client = createSupabaseClient();
-
-  const { error } = await client.from("map-entries").insert({
-    name: entry.name ?? null,
-    photo_url: entry.photo_url,
-    longitude: entry.coords.longitude,
-    latitude: entry.coords.latitude,
-  });
-
-  if (error) {
-    return { entry: entry, error: "Entry upload failed" };
-  }
-
-  return { entry: entry, error: "" };
+  const { data } = await client.from("poster-locations").select();
+  return data as PosterData[];
 }
 
-export async function getMapEntries(): Promise<MapEntryData[]> {
+export async function updatePosterSubmissionCount({
+  location_id,
+  submission_count,
+}: {
+  location_id: number;
+  submission_count: number;
+}) {
   const client = createSupabaseClient();
 
-  const { data } = await client.from("map-entries").select();
+  const { error } = await client
+    .from("poster-locations")
+    .update({ submission_count: submission_count })
+    .eq("id", location_id);
 
-  const returnData: MapEntryData[] = [];
-  data?.map((e) => {
-    returnData.push({
-      coords: { longitude: e.longitude, latitude: e.latitude },
-      photo_url: e.photo_url,
-      name: e.name,
-    });
-  });
+  if (error) {
+    return { location_id, error: "Location update failed" };
+  }
 
-  return returnData;
+  return { location_id, error: "" };
+}
+
+export async function uploadSubmission(data: SubmissionData) {
+  const client = createSupabaseClient();
+
+  const { error } = await client.from("user-submissions").insert(data);
+
+  if (error) {
+    return { data, error: "Submission upload failed" };
+  }
+
+  return { data, error: "" };
+}
+
+export async function getSubmissionsByLocationId(
+  location_id: number,
+): Promise<SubmissionData[]> {
+  const client = createSupabaseClient();
+  const { data } = await client
+    .from("user-submissions")
+    .select()
+    .eq("location_id", location_id);
+  return data as SubmissionData[];
 }

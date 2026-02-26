@@ -1,13 +1,13 @@
-import { MapEntryData } from "../types";
+import { SubmissionData } from "../types";
 
 // TO DO:
 // - Replace img with next.js Image
 
 export const MapEntryModal = ({
-  entryData,
+  data,
   onBgClick,
 }: {
-  entryData: MapEntryData;
+  data: SubmissionData;
   onBgClick?: () => void;
 }) => (
   <div
@@ -15,9 +15,9 @@ export const MapEntryModal = ({
     onClick={() => onBgClick?.()}
   >
     <div className="absolute left-1/2 top-1/2 -translate-1/2 p-4 rounded-xl flex flex-col gap-y-4 items-center bg-blue-50 text-black">
-      <img className="rounded-xl" src={entryData.photo_url} alt="" />
+      <img className="rounded-xl" src={data.photo_url} alt="" />
       <div className="w-full flex justify-between font-bold">
-        <div className="text-slate-900">{entryData.name}</div>
+        <div className="text-slate-900">{data.social}</div>
         <div className="text-slate-400">{`No Date Data Yet`}</div>
       </div>
     </div>

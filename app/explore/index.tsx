@@ -2,22 +2,22 @@
 
 import "maplibre-gl/dist/maplibre-gl.css";
 import { use, useRef, useState } from "react";
-import { GeoCoords, HomePageParams, MapEntryData } from "../types";
+import { GeoCoords, HomePageParams, SubmissionData } from "../types";
 import { ExploreMap } from "./ExploreMap";
 import { MapEntryModal } from "./MapEntryModal";
 import { LinkedIn } from "./LinkedIn";
 import { Instagram } from "./Instagram";
-import { Luckiest_Guy } from 'next/font/google'
+import { Luckiest_Guy } from "next/font/google";
 
 // TO DO:
 // - Account for movable toolbar spacing on mobile
 
 const NYC_COORDS: GeoCoords = { longitude: -73.935242, latitude: 40.73061 };
 
-const lucky  = Luckiest_Guy({
-  weight: '400',
-  subsets: ['latin'],
-})
+const lucky = Luckiest_Guy({
+  weight: "400",
+  subsets: ["latin"],
+});
 
 export const HomePage = ({
   searchParams,
@@ -29,7 +29,7 @@ export const HomePage = ({
     longitude: params.lng ? Number(params.lng) : NYC_COORDS.longitude,
     latitude: params.lat ? Number(params.lat) : NYC_COORDS.latitude,
   });
-  const [currentEntry, setCurrentEntry] = useState<MapEntryData | undefined>(
+  const [currentEntry, setCurrentEntry] = useState<SubmissionData | undefined>(
     undefined,
   );
   const goHomeRef = useRef<HTMLDivElement>(null);
@@ -38,20 +38,26 @@ export const HomePage = ({
     <div className="h-screen w-screen flex flex-col bg-pink-100 overflow-hidden">
       {currentEntry && (
         <MapEntryModal
-          entryData={currentEntry}
+          data={currentEntry}
           onBgClick={() => {
             setCurrentEntry(undefined);
           }}
         />
       )}
-      <div className={"p-8 text-xl lg:text-4xl text-center flex justify-evenly items-center text-red-800"}>
-        <Instagram/><h1 className={lucky.className}>Balloon Map!</h1><LinkedIn/>
+      <div
+        className={
+          "p-8 text-xl lg:text-4xl text-center flex justify-evenly items-center text-red-800"
+        }
+      >
+        <Instagram />
+        <h1 className={lucky.className}>Balloon Map!</h1>
+        <LinkedIn />
       </div>
       <div className="flex-1 flex justify-center items-center h-[500px] w-full overflow-hidden">
         <ExploreMap
           initCoords={initCoords}
           goHomeRef={goHomeRef}
-          onMarkerClick={(data: MapEntryData) => setCurrentEntry(data)}
+          onMarkerClick={(data: SubmissionData) => setCurrentEntry(data)}
         />
       </div>
       <div className="p-4 flex justify-center items-center">

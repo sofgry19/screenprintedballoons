@@ -3,10 +3,18 @@ export interface GeoCoords {
   latitude: number;
 }
 
-export interface MapEntryData {
+export interface PosterData {
+  id: number;
   name?: string;
+  longitude: number;
+  latitude: number;
+  submission_count: number;
+}
+
+export interface SubmissionData {
   photo_url: string;
-  coords: GeoCoords;
+  social?: string;
+  location_id: number;
 }
 
 export interface HomePageParams {

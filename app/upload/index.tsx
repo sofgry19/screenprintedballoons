@@ -1,11 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
-import { GeoCoords, MapEntryData } from "../types";
+import { GeoCoords, PosterData, SubmissionData } from "../types";
 import Link from "next/link";
 import { uploadImage } from "../supabase/storage/client";
 import { convertBlobUrlToFile, getGeolocation } from "../lib/utils";
-import { uploadMapEntry } from "../supabase/client";
+import {
+  getPosterData,
+  updatePosterSubmissionCount,
+  uploadSubmission,
+} from "../supabase/client";
 
 export const UploadPage = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -22,9 +26,9 @@ export const UploadPage = () => {
   useEffect(() => {
     console.log(selectedImageUrl);
   }, [selectedImageUrl]);
-  const [firstName, setFirstName] = useState<string>("");
+  const [userSocial, setUserSocial] = useState<string>("");
 
-  const [fakeSuccess, setFakeSuccess] = useState<MapEntryData>();
+  const [fakeSuccess, setFakeSuccess] = useState<SubmissionData>();
 
   const [isPending, startTransition] = useTransition();
   const handleClickUploadToMap = () => {
@@ -34,11 +38,17 @@ export const UploadPage = () => {
       setCurrentCoords(getGeolocation());
       return;
     }
+
     startTransition(async () => {
-      const entryData: MapEntryData = {
-        name: firstName,
+      // Get data of the nearest poster
+      const all_posters = await getPosterData();
+      const nearest_poster = findNearestPoster(currentCoords, all_posters);
+
+      // Start building user submission object
+      const submissionData: SubmissionData = {
+        social: userSocial,
         photo_url: "",
-        coords: currentCoords,
+        location_id: nearest_poster.id,
       };
 
       // Upload image to bucket and get public url
@@ -51,26 +61,40 @@ export const UploadPage = () => {
         console.error(imageUploadError);
         return;
       }
-      entryData.photo_url = imageUrl;
+      submissionData.photo_url = imageUrl;
 
-      // Upload map entry to database
-      const { entry, error: entryUploadError } =
-        await uploadMapEntry(entryData);
-      if (entryUploadError) {
-        console.error(entryUploadError);
+      // Upload user submission to database
+      const { data, error: submissionUploadError } =
+        await uploadSubmission(submissionData);
+      if (submissionUploadError) {
+        console.error(submissionUploadError);
         return;
       }
 
-      
-      console.log(entry);
-      setFakeSuccess(entryData);
+      console.log(data);
+
+      // Update submission_count of poster in database
+      const { location_id, error: posterUpdateError } =
+        await updatePosterSubmissionCount({
+          location_id: nearest_poster.id,
+          submission_count: nearest_poster.submission_count + 1,
+        });
+      if (posterUpdateError) {
+        console.error(posterUpdateError);
+        return;
+      }
+
+      console.log(location_id);
+
+      setFakeSuccess(submissionData);
     });
   };
 
   return (
     <div className="h-full w-full bg-zinc-50 font-sans dark:bg-black">
-      {fakeSuccess && <SuccessModal entryData={fakeSuccess} />}
+      {fakeSuccess && currentCoords && <SuccessModal coords={currentCoords} />}
       <div className="p-8 bg-blue-100">
+        <CoordsPill coords={currentCoords} />
         <div className="w-2/3 lg:w-1/2 xl:w-1/3 aspect-square mx-auto p-2 rounded-xl bg-blue-200 border-2 border-dashed border-blue-500 overflow-hidden flex justify-center items-center">
           {selectedImageUrl ? (
             /* eslint-disable @next/next/no-img-element */
@@ -116,14 +140,14 @@ export const UploadPage = () => {
             </button>
           </div>
           <div>
-            <label>{"Want to share your name?"}</label>
+            <label>{"Share your Instagram?"}</label>
             <input
               type="text"
-              value={firstName}
+              value={userSocial}
               disabled={isPending}
               className="w-full rounded-md p-2 border-3 border-blue-500 text-black"
               onChange={(e) => {
-                setFirstName(e.target.value);
+                setUserSocial(e.target.value);
               }}
             />
           </div>
@@ -140,14 +164,14 @@ export const UploadPage = () => {
   );
 };
 
-const SuccessModal = ({ entryData }: { entryData: MapEntryData }) => (
+const SuccessModal = ({ coords }: { coords: GeoCoords }) => (
   <div className="absolute h-screen w-screen bg-[rgba(0,0,0,0.5)]">
     <div className="absolute left-1/2 top-1/2 -translate-1/2 p-4 rounded-xl flex flex-col gap-y-4 items-center bg-blue-50">
       <div className="text-black">
         {"Fake upload success! Now go see everyone else's photos!"}
       </div>
       <Link
-        href={`/explore/?lng=${entryData.coords.longitude}&lat=${entryData.coords.latitude}`}
+        href={`/explore/?lng=${coords.longitude}&lat=${coords.latitude}`}
         className="w-min rounded-md p-4 bg-blue-500 text-white disabled:bg-slate-300 disabled:text-slate-400 whitespace-nowrap"
       >
         {"Go to Map"}
@@ -155,3 +179,32 @@ const SuccessModal = ({ entryData }: { entryData: MapEntryData }) => (
     </div>
   </div>
 );
+
+const CoordsPill = ({ coords }: { coords?: GeoCoords }) => (
+  <div
+    className={`${coords ? "bg-green-700" : "bg-red-700 animate-pulse"} rounded-full px-4 py-1 mb-4 w-min whitespace-nowrap`}
+  >
+    {coords ? "Location Found!" : "Finding Location..."}
+  </div>
+);
+
+const findNearestPoster = (
+  currentCoords: GeoCoords,
+  poster_locations: PosterData[],
+): PosterData => {
+  let min_dist = Number.MAX_VALUE;
+  let closest_loc: PosterData = poster_locations[0];
+
+  poster_locations.map((loc_data: PosterData) => {
+    const dist_squared =
+      Math.exp(loc_data.longitude - currentCoords.longitude) +
+      Math.exp(loc_data.latitude - currentCoords.latitude);
+
+    if (dist_squared < min_dist) {
+      min_dist = dist_squared;
+      closest_loc = loc_data;
+    }
+  });
+
+  return closest_loc;
+};

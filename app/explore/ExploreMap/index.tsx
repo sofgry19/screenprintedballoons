@@ -1,8 +1,7 @@
 import "maplibre-gl/dist/maplibre-gl.css";
 import { Ref, Suspense, useEffect, useState } from "react";
 import Map, { useMap } from "react-map-gl/maplibre";
-import { createMockCoords, MOCK_ENTRIES } from "../../mock-data";
-import { GeoCoords, MapEntryData } from "../../types";
+import { GeoCoords, SubmissionData } from "../../types";
 import { BalloonMarker } from "./BalloonMarker";
 
 export const ExploreMap = ({
@@ -11,7 +10,7 @@ export const ExploreMap = ({
   goHomeRef,
 }: {
   initCoords: GeoCoords;
-  onMarkerClick: (data: MapEntryData) => void;
+  onMarkerClick: (data: SubmissionData) => void;
   goHomeRef: Ref<HTMLDivElement>;
 }) => {
   return (
@@ -26,20 +25,6 @@ export const ExploreMap = ({
         maxZoom={20}
         mapStyle={`https://api.maptiler.com/maps/streets/style.json?key=${process.env.NEXT_PUBLIC_MAPTILER_KEY ?? ""}`}
       >
-        {MOCK_ENTRIES.map((e, i) => {
-          const coordOverride = createMockCoords(initCoords, 0.002, 1)[0];
-
-          return (
-            <BalloonMarker
-              key={`mockLoc${i}`}
-              longitude={coordOverride.longitude}
-              latitude={coordOverride.latitude}
-              onClick={() => {
-                onMarkerClick(e);
-              }}
-            />
-          );
-        })}
         <GoHome ref={goHomeRef} />
       </Map>
     </Suspense>
