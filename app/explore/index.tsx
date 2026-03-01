@@ -8,12 +8,11 @@ import { LocationModal } from "./LocationModal";
 import { LinkedIn } from "./LinkedIn";
 import { Instagram } from "./Instagram";
 import { getLocationData } from "../supabase/client";
-import { FONT_LUCKY } from "../lib/constants";
+import { FONT_LUCKY, NYC_COORDS } from "../lib/constants";
 
 // TO DO:
 // - Account for movable toolbar spacing on mobile
 
-const NYC_COORDS: GeoCoords = { longitude: -73.935242, latitude: 40.73061 };
 
 export const HomePage = ({
   searchParams,
