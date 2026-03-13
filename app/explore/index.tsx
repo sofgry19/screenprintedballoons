@@ -5,15 +5,13 @@ import { use, useEffect, useRef, useState } from "react";
 import { GeoCoords, HomePageParams, LocationData } from "../types";
 import { ExploreMap } from "./ExploreMap";
 import { LocationModal } from "./LocationModal";
-import { LinkedIn } from "./LinkedIn";
-import { Instagram } from "./Instagram";
+import { SocialLink } from "./SocialLink";
 import { getLocationData } from "../supabase/client";
-import { FONT_LUCKY } from "../lib/constants";
+import { FONT_LUCKY, NYC_COORDS } from "../lib/constants";
 
 // TO DO:
 // - Account for movable toolbar spacing on mobile
 
-const NYC_COORDS: GeoCoords = { longitude: -73.935242, latitude: 40.73061 };
 
 export const HomePage = ({
   searchParams,
@@ -55,9 +53,9 @@ export const HomePage = ({
           "p-8 text-xl lg:text-4xl text-center flex justify-evenly items-center text-red-800"
         }
       >
-        <Instagram />
+        <SocialLink href="https://www.linkedin.com/in/sofiagry/" text="LinkedIn!" />
         <h1 className={FONT_LUCKY.className}>Balloon Map!</h1>
-        <LinkedIn />
+        <SocialLink href="https://www.instagram.com/astralsofia/" text="IG!" />
       </div>
       <div className="flex-1 flex justify-center items-center h-[500px] w-full overflow-hidden">
         <ExploreMap
