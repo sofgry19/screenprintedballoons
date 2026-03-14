@@ -4,15 +4,16 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { GeoCoords, LocationData, SubmissionData } from "../types";
 import Link from "next/link";
 import { uploadImage } from "../supabase/storage/client";
-import { getGeolocation } from "../lib/utils";
+import { convertBlobUrlToFile, getGeolocation } from "../lib/utils";
 import {
   getLocationData,
   updateLocationSubmissionCount,
   uploadSubmission,
 } from "../supabase/client";
-import { Camera, CameraType } from "react-camera-pro";
 
 export const UploadPage = () => {
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const [currentCoords, setCurrentCoords] = useState<GeoCoords>();
   useEffect(() => {
     navigator.geolocation.getCurrentPosition((pos) => {
@@ -21,8 +22,10 @@ export const UploadPage = () => {
     });
   }, []);
 
-  const [userPhotoSrc, setUserPhotoSrc] = useState<string>();
-  const [userPhotoFile, setUserPhotoFile] = useState<File>();
+  const [selectedImageUrl, setSelectedImageUrl] = useState<string>("");
+  useEffect(() => {
+    console.log(selectedImageUrl);
+  }, [selectedImageUrl]);
   const [userSocial, setUserSocial] = useState<string>("");
 
   const [fakeSuccess, setFakeSuccess] = useState<SubmissionData>();
@@ -49,9 +52,9 @@ export const UploadPage = () => {
       };
 
       // Upload image to bucket and get public url
-      //const imageFile = await convertBlobUrlToFile(selectedImageUrl);
+      const imageFile = await convertBlobUrlToFile(selectedImageUrl);
       const { imageUrl, error: imageUploadError } = await uploadImage({
-        file: userPhotoFile as File,
+        file: imageFile,
         bucket: "user-photos",
       });
       if (imageUploadError) {
@@ -87,91 +90,19 @@ export const UploadPage = () => {
     });
   };
 
-  const camera = useRef<CameraType>(null);
-
-  const [isCameraOpen, setIsCameraOpen] = useState<boolean>(false);
-
-  // Capture photo from camera
-  const capturePhoto = () => {
-    if (camera.current) {
-      const photoSrc: string = camera.current.takePhoto("base64url") as string;
-      setUserPhotoSrc(photoSrc as string);
-
-      urltoFile(photoSrc, "photo.jpeg", "image/jpeg").then(function (file) {
-        console.log(file);
-        setUserPhotoFile(file);
-        setIsCameraOpen(false);
-      });
-
-      // rotateImage(photoSrc, 0, (imageSrc: string) => {
-      //   urltoFile(imageSrc, "photo.jpeg", "image/jpeg").then(function (file) {
-      //     console.log(file);
-      //     setUserPhotoFile(file);
-      //     setIsCameraOpen(false);
-      //   });
-      // });
-    }
-  };
-
-  // Convert from base64 format to image file
-  function urltoFile(url: string, filename: string, mimeType: string) {
-    return fetch(url)
-      .then(function (res) {
-        return res.arrayBuffer();
-      })
-      .then(function (buf) {
-        return new File([buf], filename, { type: mimeType });
-      });
-  }
-
-  const rotateImage = (
-    imageBase64: string,
-    rotation: number,
-    cb: (base64Url: string) => void,
-  ) => {
-    const img = new Image();
-    img.src = imageBase64;
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext("2d");
-      ctx?.translate(canvas.width, 0);
-      ctx?.scale(-1, 1);
-      ctx?.drawImage(img, 0, 0);
-      cb(canvas.toDataURL("image/jpeg", 1));
-    };
-  };
-
   return (
-    <div className="h-screen w-screen bg-zinc-50 font-sans dark:bg-black overflow-hidden">
-      {isCameraOpen && (
-        <div className="absolute left-0 top-0 w-full h-full bg-yellow-50">
-          <Camera
-            ref={camera}
-            facingMode="user"
-            aspectRatio={"cover"}
-            errorMessages={{}}
-          />
-          <button
-            className="absolute bottom-8 left-1/2 -translate-x-1/2 w-[300px] rounded-md p-4 bg-blue-500 text-white cursor-pointer"
-            disabled={isPending}
-            type="button"
-            onClick={() => {
-              capturePhoto();
-            }}
-          >
-            {"Capture Photo"}
-          </button>
-        </div>
-      )}
+    <div className="h-full w-full bg-zinc-50 font-sans dark:bg-black">
       {fakeSuccess && currentCoords && <SuccessModal coords={currentCoords} />}
       <div className="p-8 bg-blue-100">
         <CoordsPill coords={currentCoords} />
         <div className="w-2/3 lg:w-1/2 xl:w-1/3 aspect-square mx-auto p-2 rounded-xl bg-blue-200 border-2 border-dashed border-blue-500 overflow-hidden flex justify-center items-center">
-          {userPhotoFile ? (
+          {selectedImageUrl ? (
             /* eslint-disable @next/next/no-img-element */
-            <img src={userPhotoSrc} className="max-w-full max-h-full" alt="" />
+            <img
+              src={selectedImageUrl}
+              className="max-w-full max-h-full"
+              alt=""
+            />
           ) : (
             <div></div>
           )}
@@ -184,15 +115,29 @@ export const UploadPage = () => {
           className="flex flex-col gap-y-4 mt-4 text-black"
         >
           <div className="w-2/3 lg:w-1/2 xl:w-1/3 mx-auto flex flex-col items-center">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              capture="user"
+              disabled={isPending}
+              onChange={async (e) => {
+                const file = e.target.files?.[0] as File;
+                const fileUrl = URL.createObjectURL(file);
+                setSelectedImageUrl(fileUrl);
+              }}
+              className="hidden"
+            />
+
             <button
               className="w-full rounded-md p-4 bg-blue-500 text-white disabled:bg-slate-300 disabled:text-slate-400"
               disabled={isPending}
               type="button"
               onClick={() => {
-                setIsCameraOpen(true);
+                fileInputRef.current?.click();
               }}
             >
-              {userPhotoFile ? "Change Photo" : "Take Photo"}
+              {"Select Image"}
             </button>
           </div>
           <div>
@@ -210,7 +155,7 @@ export const UploadPage = () => {
           <button
             className="w-full rounded-md p-4 bg-blue-500 text-white disabled:bg-slate-300 disabled:text-slate-400"
             type="submit"
-            disabled={!currentCoords || !userPhotoFile || isPending}
+            disabled={!currentCoords || !selectedImageUrl || isPending}
           >
             {isPending ? "Uploading..." : "Upload to map!"}
           </button>
