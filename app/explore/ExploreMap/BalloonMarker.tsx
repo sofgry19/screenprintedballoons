@@ -56,7 +56,7 @@ const BalloonMarkerIcon = ({
         fill={"#ffffff"}
         className={`${FONT_LUCKY.className} translate-y-2/5 translate-x-1/2`}
         fontSize={60 - 8 * text.length + "pt"}
-        dominant-baseline="middle"
+        dominantBaseline="middle"
         textAnchor="middle"
       >
         {text}

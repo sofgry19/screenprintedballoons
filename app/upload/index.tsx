@@ -21,11 +21,7 @@ export const UploadPage = () => {
       setCurrentCoords({ latitude, longitude });
     });
   }, []);
-
-  const [selectedImageUrl, setSelectedImageUrl] = useState<string>("");
-  useEffect(() => {
-    console.log(selectedImageUrl);
-  }, [selectedImageUrl]);
+  const [userPhotoSrc, setUserPhotoSrc] = useState<string>("");
   const [userSocial, setUserSocial] = useState<string>("");
 
   const [fakeSuccess, setFakeSuccess] = useState<SubmissionData>();
@@ -52,7 +48,7 @@ export const UploadPage = () => {
       };
 
       // Upload image to bucket and get public url
-      const imageFile = await convertBlobUrlToFile(selectedImageUrl);
+      const imageFile = await convertBlobUrlToFile(userPhotoSrc);
       const { imageUrl, error: imageUploadError } = await uploadImage({
         file: imageFile,
         bucket: "user-photos",
@@ -90,21 +86,26 @@ export const UploadPage = () => {
     });
   };
 
+  const [isCameraDenied, setIsCameraDenied] = useState<boolean>(false);
+  const [isThereNoCamera, setIsThereNoCamera] = useState<boolean>(false);
+
   return (
     <div className="h-full w-full bg-zinc-50 font-sans dark:bg-black">
       {fakeSuccess && currentCoords && <SuccessModal coords={currentCoords} />}
       <div className="p-8 bg-blue-100">
         <CoordsPill coords={currentCoords} />
         <div className="w-2/3 lg:w-1/2 xl:w-1/3 aspect-square mx-auto p-2 rounded-xl bg-blue-200 border-2 border-dashed border-blue-500 overflow-hidden flex justify-center items-center">
-          {selectedImageUrl ? (
+          {userPhotoSrc ? (
             /* eslint-disable @next/next/no-img-element */
-            <img
-              src={selectedImageUrl}
-              className="max-w-full max-h-full"
-              alt=""
-            />
+            <img src={userPhotoSrc} className="max-w-full max-h-full" alt="" />
           ) : (
-            <div></div>
+            <div>
+              {isCameraDenied
+                ? "YEAH WE NEED CAMERA PERMISSIONS"
+                : isThereNoCamera
+                  ? "GET A CAMERA MAYBE"
+                  : ""}
+            </div>
           )}
         </div>
         <form
@@ -124,7 +125,7 @@ export const UploadPage = () => {
               onChange={async (e) => {
                 const file = e.target.files?.[0] as File;
                 const fileUrl = URL.createObjectURL(file);
-                setSelectedImageUrl(fileUrl);
+                setUserPhotoSrc(fileUrl);
               }}
               className="hidden"
             />
@@ -134,10 +135,19 @@ export const UploadPage = () => {
               disabled={isPending}
               type="button"
               onClick={() => {
-                fileInputRef.current?.click();
+                navigator.mediaDevices
+                  .getUserMedia({ video: true, audio: false })
+                  .then((stream: MediaStream) => {
+                    fileInputRef.current?.click();
+                  })
+                  .catch((e: DOMException) => {
+                    if (e.name == "NotFoundError") setIsThereNoCamera(true);
+                    if (e.name == "NotAllowedError") setIsCameraDenied(true);
+                    else console.error(`An error occurred: ${e}`);
+                  });
               }}
             >
-              {"Select Image"}
+              {userPhotoSrc ? "Change Photo" : "Take Photo"}
             </button>
           </div>
           <div>
@@ -155,7 +165,7 @@ export const UploadPage = () => {
           <button
             className="w-full rounded-md p-4 bg-blue-500 text-white disabled:bg-slate-300 disabled:text-slate-400"
             type="submit"
-            disabled={!currentCoords || !selectedImageUrl || isPending}
+            disabled={!currentCoords || !userPhotoSrc || isPending}
           >
             {isPending ? "Uploading..." : "Upload to map!"}
           </button>
