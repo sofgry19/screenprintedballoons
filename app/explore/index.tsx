@@ -1,7 +1,7 @@
 "use client";
 
 import "maplibre-gl/dist/maplibre-gl.css";
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, use } from "react";
 import { GeoCoords, HomePageParams, LocationData } from "../types";
 import { ExploreMap } from "./ExploreMap";
 import { LocationModal } from "./LocationModal";
@@ -11,7 +11,6 @@ import { FONT_LUCKY, NYC_COORDS } from "../lib/constants";
 
 // TO DO:
 // - Account for movable toolbar spacing on mobile
-
 
 export const HomePage = ({
   searchParams,
@@ -39,7 +38,7 @@ export const HomePage = ({
   );
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-pink-100 overflow-hidden">
+    <div className="h-screen w-screen flex flex-col bg-white overflow-hidden">
       {selectedLoc && (
         <LocationModal
           location={selectedLoc}
@@ -50,14 +49,12 @@ export const HomePage = ({
       )}
       <div
         className={
-          "p-8 text-xl lg:text-4xl text-center flex justify-evenly items-center text-red-800"
+          "p-8 text-3xl lg:text-4xl text-center flex justify-evenly items-center text-pink-400"
         }
       >
-        <SocialLink href="https://www.linkedin.com/in/sofiagry/" text="LinkedIn!" />
         <h1 className={FONT_LUCKY.className}>Balloon Map!</h1>
-        <SocialLink href="https://www.instagram.com/astralsofia/" text="IG!" />
       </div>
-      <div className="flex-1 flex justify-center items-center h-[500px] w-full overflow-hidden">
+      <div className="flex-1 flex justify-center justify-evenly items-center h-[500px] w-full overflow-hidden">
         <ExploreMap
           initCoords={initCoords}
           goHomeRef={goHomeRef}
@@ -65,7 +62,8 @@ export const HomePage = ({
           posters={locData ?? []}
         />
       </div>
-      <div className="p-4 flex justify-center items-center">
+      <div className="p-4 flex justify-center justify-evenly items-center">
+                <SocialLink href="https://www.linkedin.com/in/sofiagry/" text="LINKEDIN" />
         <button
           className="text-md py-2 px-4 rounded-lg bg-pink-200 cursor-pointer items-center"
           onClick={() => {
@@ -74,6 +72,7 @@ export const HomePage = ({
         >
           {`Go to my location`}
         </button>
+        <SocialLink href="https://www.instagram.com/astralsofia/" text="IG" />
       </div>
     </div>
   );

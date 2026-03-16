@@ -151,7 +151,7 @@ export const UploadPage = () => {
             </button>
           </div>
           <div>
-            <label>{"Share your Instagram?"}</label>
+            <label>{"What's one thing that brought you joy today?"}</label>
             <input
               type="text"
               value={userSocial}

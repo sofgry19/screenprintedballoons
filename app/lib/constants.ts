@@ -1,9 +1,15 @@
-import { Luckiest_Guy } from "next/font/google";
+import { Rampart_One } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import { GeoCoords } from "../types";
 
 
-export const FONT_LUCKY = Luckiest_Guy({
+export const FONT_LUCKY = Rampart_One({
   weight: "400",
+  subsets: ["latin"],
+});
+
+export const FONT_MON = Montserrat({
+  weight: "700",
   subsets: ["latin"],
 });
 
