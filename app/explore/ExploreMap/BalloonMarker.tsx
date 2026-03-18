@@ -1,4 +1,4 @@
-import { FONT_LUCKY } from "@/app/lib/constants";
+import { FONT_LUCKY, FONT_MON } from "@/app/lib/constants";
 import { Marker } from "react-map-gl/maplibre";
 
 export const BalloonMarker = ({
@@ -13,8 +13,9 @@ export const BalloonMarker = ({
   onClick?: () => void;
 }) => (
   <Marker longitude={longitude} latitude={latitude} anchor="bottom">
+    <div className="absolute left-1/2 -translate-1/2 -bottom-4 w-4 h-4 rounded-full scale-y-50 bg-[rgb(0_0_0/0.25)] shadow-[0_0_4px_4px_rgb(0_0_0/0.25)]" />
     <BalloonMarkerIcon
-      className="h-12 w-12 text-pink-400 hover:scale-[1.2] hover:-translate-y-[10%] duration-200 cursor-pointer"
+      className="relative h-16 w-16 text-pink-400 hover:scale-[1.2] hover:-translate-y-[10%] duration-200 cursor-pointer"
       onClick={onClick}
       text={count?.toString()}
     />
@@ -54,7 +55,7 @@ const BalloonMarkerIcon = ({
     {text && (
       <text
         fill={"#ffffff"}
-        className={`${FONT_LUCKY.className} translate-y-2/5 translate-x-1/2`}
+        className={`${FONT_MON.className} translate-y-3/7 translate-x-1/2`}
         fontSize={60 - 8 * text.length + "pt"}
         dominantBaseline="middle"
         textAnchor="middle"

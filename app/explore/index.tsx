@@ -50,7 +50,7 @@ export const HomePage = ({
           }}
         />
       )}
-      <div className={"p-4 flex justify-between items-center"}>
+      <div className={"z-10 p-4 flex justify-between items-center shadow-lg"}>
         <h1
           className={`${FONT_LUCKY.className} -mt-2 text-3xl lg:text-4xl text-pink-400`}
         >
