@@ -10,6 +10,8 @@ import {
   updateLocationSubmissionCount,
   uploadSubmission,
 } from "../supabase/client";
+import { FONT_LUCKY, FONT_MON } from "../lib/constants";
+import { CheckIcon, EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 
 export const UploadPage = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -90,80 +92,98 @@ export const UploadPage = () => {
   const [isThereNoCamera, setIsThereNoCamera] = useState<boolean>(false);
 
   return (
-    <div className="h-full w-full bg-zinc-50 font-sans dark:bg-black">
+    <div
+      className={`h-screen w-screen flex flex-col bg-white overflow-hidden ${FONT_MON.className}`}
+    >
       {fakeSuccess && currentCoords && <SuccessModal coords={currentCoords} />}
-      <div className="p-8 bg-blue-100">
-        <CoordsPill coords={currentCoords} />
-        <div className="w-2/3 lg:w-1/2 xl:w-1/3 aspect-square mx-auto p-2 rounded-xl bg-blue-200 border-2 border-dashed border-blue-500 overflow-hidden flex justify-center items-center">
-          {userPhotoSrc ? (
-            /* eslint-disable @next/next/no-img-element */
-            <img src={userPhotoSrc} className="max-w-full max-h-full" alt="" />
-          ) : (
-            <div>
-              {isCameraDenied
-                ? "YEAH WE NEED CAMERA PERMISSIONS"
-                : isThereNoCamera
-                  ? "GET A CAMERA MAYBE"
-                  : ""}
-            </div>
-          )}
-        </div>
+      <div className={"z-10 p-4 shadow-lg"}>
+        <h1
+          className={`${FONT_LUCKY.className} -mt-2 text-3xl lg:text-4xl text-center text-pink-400`}
+        >
+          {"Join the Party!"}
+        </h1>
+      </div>
+      <div
+        className={`${currentCoords ? "text-gray-500" : "text-gray-300 animate-pulse"} absolute top-4 right-4 flex items-center gap-x-2 w-min whitespace-nowrap`}
+      >
+        {currentCoords ? "Location Found" : "Finding Location..."}
+        {currentCoords && <CheckIcon className="w-6 h-6 stroke-2" />}
+      </div>
+      <div className="flex-1 p-8 bg-pink-100">
         <form
           onSubmit={(e) => {
             e.preventDefault();
             handleClickUploadToMap();
           }}
-          className="flex flex-col gap-y-4 mt-4 text-black"
+          className="h-full flex flex-col justify-center gap-y-8 mt-4 text-black"
         >
-          <div className="w-2/3 lg:w-1/2 xl:w-1/3 mx-auto flex flex-col items-center">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              capture="user"
-              disabled={isPending}
-              onChange={async (e) => {
-                const file = e.target.files?.[0] as File;
-                const fileUrl = URL.createObjectURL(file);
-                setUserPhotoSrc(fileUrl);
-              }}
-              className="hidden"
-            />
-
-            <button
-              className="w-full rounded-md p-4 bg-blue-500 text-white disabled:bg-slate-300 disabled:text-slate-400"
-              disabled={isPending}
-              type="button"
-              onClick={() => {
-                navigator.mediaDevices
-                  .getUserMedia({ video: true, audio: false })
-                  .then((stream: MediaStream) => {
-                    fileInputRef.current?.click();
-                  })
-                  .catch((e: DOMException) => {
-                    if (e.name == "NotFoundError") setIsThereNoCamera(true);
-                    if (e.name == "NotAllowedError") setIsCameraDenied(true);
-                    else console.error(`An error occurred: ${e}`);
-                  });
-              }}
-            >
-              {userPhotoSrc ? "Change Photo" : "Take Photo"}
-            </button>
+          <div className="flex flex-col gap-y-2 w-2/3 lg:w-1/2 xl:w-1/3 mx-auto">
+            <div className="aspect-square p-2 rounded-xl bg-white border-4 border-dashed border-pink-500 overflow-hidden flex justify-center items-center">
+              {userPhotoSrc ? (
+                /* eslint-disable @next/next/no-img-element */
+                <img
+                  src={userPhotoSrc}
+                  className="max-w-full max-h-full"
+                  alt=""
+                />
+              ) : (
+                <div>
+                  {isCameraDenied
+                    ? "YEAH WE NEED CAMERA PERMISSIONS"
+                    : isThereNoCamera
+                      ? "GET A CAMERA MAYBE"
+                      : ""}
+                </div>
+              )}
+            </div>
+            <div className="w-full flex flex-col items-center">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                capture="user"
+                disabled={isPending}
+                onChange={async (e) => {
+                  const file = e.target.files?.[0] as File;
+                  const fileUrl = URL.createObjectURL(file);
+                  setUserPhotoSrc(fileUrl);
+                }}
+                className="hidden"
+              />
+              <button
+                className="w-full rounded-lg p-4 bg-pink-500 text-white disabled:bg-pink-200 disabled:text-pink-300"
+                disabled={isPending}
+                type="button"
+                onClick={() => {
+                  navigator.mediaDevices
+                    .getUserMedia({ video: true, audio: false })
+                    .then((stream: MediaStream) => {
+                      fileInputRef.current?.click();
+                    })
+                    .catch((e: DOMException) => {
+                      if (e.name == "NotFoundError") setIsThereNoCamera(true);
+                      if (e.name == "NotAllowedError") setIsCameraDenied(true);
+                      else console.error(`An error occurred: ${e}`);
+                    });
+                }}
+              >
+                {userPhotoSrc ? "Change Photo?" : "Take a Photo"}
+              </button>
+            </div>
           </div>
-          <div>
+          <div className="w-full lg:3/4 mx-auto">
             <label>{"What's one thing that brought you joy today?"}</label>
-            <input
-              type="text"
+            <textarea
               value={userSocial}
               disabled={isPending}
-              className="w-full rounded-md p-2 border-3 border-blue-500 text-black"
+              className="w-full rounded-md p-2 border-3 border-pink-500 bg-white text-black"
               onChange={(e) => {
                 setUserSocial(e.target.value);
               }}
             />
           </div>
           <button
-            className="w-full rounded-md p-4 bg-blue-500 text-white disabled:bg-slate-300 disabled:text-slate-400"
+            className="w-full lg:3/4 mx-auto rounded-md p-4 bg-pink-500 text-white disabled:bg-pink-200 disabled:text-pink-300"
             type="submit"
             disabled={!currentCoords || !userPhotoSrc || isPending}
           >
@@ -177,25 +197,17 @@ export const UploadPage = () => {
 
 const SuccessModal = ({ coords }: { coords: GeoCoords }) => (
   <div className="absolute h-screen w-screen bg-[rgba(0,0,0,0.5)]">
-    <div className="absolute left-1/2 top-1/2 -translate-1/2 p-4 rounded-xl flex flex-col gap-y-4 items-center bg-blue-50">
+    <div className="absolute left-1/2 top-1/2 -translate-1/2 p-4 rounded-xl flex flex-col gap-y-4 items-center bg-white">
       <div className="text-black">
-        {"Fake upload success! Now go see everyone else's photos!"}
+        {"Upload success! Now go see everyone else's photos!"}
       </div>
       <Link
         href={`/explore/?lng=${coords.longitude}&lat=${coords.latitude}`}
-        className="w-min rounded-md p-4 bg-blue-500 text-white disabled:bg-slate-300 disabled:text-slate-400 whitespace-nowrap"
+        className="w-min rounded-md p-4 bg-pink-500 text-white whitespace-nowrap"
       >
         {"Go to Map"}
       </Link>
     </div>
-  </div>
-);
-
-const CoordsPill = ({ coords }: { coords?: GeoCoords }) => (
-  <div
-    className={`${coords ? "bg-green-700" : "bg-red-700 animate-pulse"} rounded-full px-4 py-1 mb-4 w-min whitespace-nowrap`}
-  >
-    {coords ? "Location Found!" : "Finding Location..."}
   </div>
 );
 
