@@ -7,7 +7,8 @@ import { ExploreMap } from "./ExploreMap";
 import { LocationModal } from "./LocationModal";
 import { SocialLink } from "./SocialLink";
 import { getLocationData } from "../supabase/client";
-import { FONT_LUCKY, NYC_COORDS } from "../lib/constants";
+import { FONT_LUCKY, FONT_MON, NYC_COORDS } from "../lib/constants";
+import { ArrowsPointingInIcon } from "@heroicons/react/24/outline";
 
 // TO DO:
 // - Account for movable toolbar spacing on mobile
@@ -38,7 +39,9 @@ export const HomePage = ({
   );
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-white overflow-hidden">
+    <div
+      className={`h-screen w-screen flex flex-col bg-white overflow-hidden ${FONT_MON.className}`}
+    >
       {selectedLoc && (
         <LocationModal
           location={selectedLoc}
@@ -47,32 +50,38 @@ export const HomePage = ({
           }}
         />
       )}
-      <div
-        className={
-          "p-8 text-3xl lg:text-4xl text-center flex justify-evenly items-center text-pink-400"
-        }
-      >
-        <h1 className={FONT_LUCKY.className}>Balloon Map!</h1>
+      <div className={"p-4 flex justify-between items-center"}>
+        <h1
+          className={`${FONT_LUCKY.className} -mt-2 text-3xl lg:text-4xl text-pink-400`}
+        >
+          {"Sofia's Balloon Map"}
+        </h1>
+        <div className="-mx-4 flex justify-evenly items-center divide-x-2 divide-gray-300 text-md lg:text-lg font-medium text-gray-300">
+          <SocialLink
+            href="https://www.linkedin.com/in/sofiagry/"
+            text="LINKEDIN"
+          />
+          <SocialLink href="https://www.instagram.com/astralsofia/" text="IG" />
+        </div>
       </div>
-      <div className="flex-1 flex justify-center justify-evenly items-center h-[500px] w-full overflow-hidden">
+      <div className="relative flex-1 w-full overflow-hidden">
         <ExploreMap
           initCoords={initCoords}
           goHomeRef={goHomeRef}
           onMarkerClick={(data: LocationData) => setSelectedLoc(data)}
           posters={locData ?? []}
         />
-      </div>
-      <div className="p-4 flex justify-center justify-evenly items-center">
-                <SocialLink href="https://www.linkedin.com/in/sofiagry/" text="LINKEDIN" />
         <button
-          className="text-md py-2 px-4 rounded-lg bg-pink-200 cursor-pointer items-center"
+          className="absolute left-4 bottom-4 p-2 rounded-lg bg-pink-400 opacity-50 hover:opacity-100 cursor-pointer transition-opacity duration-200"
           onClick={() => {
             goHomeRef.current?.click();
           }}
         >
-          {`Go to my location`}
+          <div className="w-min flex items-center gap-x-1 whitespace-nowrap">
+            <ArrowsPointingInIcon className="w-6 h-6 stroke-2" />
+            <span className="px-1 text-lg font-bold">{"My Location"}</span>
+          </div>
         </button>
-        <SocialLink href="https://www.instagram.com/astralsofia/" text="IG" />
       </div>
     </div>
   );
