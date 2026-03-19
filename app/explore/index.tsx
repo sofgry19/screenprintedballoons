@@ -10,9 +10,6 @@ import { getLocationData } from "../supabase/client";
 import { FONT_LUCKY, FONT_MON, NYC_COORDS } from "../lib/constants";
 import { ArrowsPointingInIcon } from "@heroicons/react/24/outline";
 
-// TO DO:
-// - Account for movable toolbar spacing on mobile
-
 export const HomePage = ({
   searchParams,
 }: {
@@ -40,7 +37,7 @@ export const HomePage = ({
 
   return (
     <div
-      className={`h-screen w-screen flex flex-col bg-white overflow-hidden ${FONT_MON.className}`}
+      className={`fixed w-full h-full flex flex-col bg-white overflow-hidden ${FONT_MON.className}`}
     >
       {selectedLoc && (
         <LocationModal
@@ -52,11 +49,11 @@ export const HomePage = ({
       )}
       <div className={"z-10 p-4 flex justify-between items-center shadow-lg"}>
         <h1
-          className={`${FONT_LUCKY.className} -mt-2 text-3xl lg:text-4xl text-pink-400`}
+          className={`${FONT_LUCKY.className} -mt-2 text-xl md:text-3xl lg:text-4xl text-pink-400`}
         >
           {"Sofia's Balloon Map"}
         </h1>
-        <div className="-mx-4 flex justify-evenly items-center divide-x-2 divide-gray-300 text-md lg:text-lg font-medium text-gray-300">
+        <div className="-mx-4 flex justify-evenly items-center divide-x-2 divide-gray-300 text-xs md:text-sm lg:text-lg font-medium text-gray-300">
           <SocialLink
             href="https://www.linkedin.com/in/sofiagry/"
             text="LINKEDIN"
@@ -78,8 +75,10 @@ export const HomePage = ({
           }}
         >
           <div className="w-min flex items-center gap-x-1 whitespace-nowrap">
-            <ArrowsPointingInIcon className="w-6 h-6 stroke-2" />
-            <span className="px-1 text-lg font-bold">{"My Location"}</span>
+            <ArrowsPointingInIcon className="w-4 h-4 md:w-6 md:h-6 stroke-2" />
+            <span className="px-1 text-sm md:text-lg font-bold">
+              {"My Location"}
+            </span>
           </div>
         </button>
       </div>

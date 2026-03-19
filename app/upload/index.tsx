@@ -11,7 +11,7 @@ import {
   uploadSubmission,
 } from "../supabase/client";
 import { FONT_LUCKY, FONT_MON } from "../lib/constants";
-import { CheckIcon, EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
+import { CheckIcon } from "@heroicons/react/24/outline";
 
 export const UploadPage = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -26,7 +26,7 @@ export const UploadPage = () => {
   const [userPhotoSrc, setUserPhotoSrc] = useState<string>("");
   const [userSocial, setUserSocial] = useState<string>("");
 
-  const [fakeSuccess, setFakeSuccess] = useState<SubmissionData>();
+  const [uploadSuccess, setUploadSuccess] = useState<SubmissionData>();
 
   const [isPending, startTransition] = useTransition();
   const handleClickUploadToMap = () => {
@@ -84,7 +84,7 @@ export const UploadPage = () => {
 
       console.log(location_id);
 
-      setFakeSuccess(submissionData);
+      setUploadSuccess(submissionData);
     });
   };
 
@@ -93,9 +93,11 @@ export const UploadPage = () => {
 
   return (
     <div
-      className={`h-screen w-screen flex flex-col bg-white overflow-hidden ${FONT_MON.className}`}
+      className={`fixed w-full h-full flex flex-col bg-white overflow-hidden ${FONT_MON.className}`}
     >
-      {fakeSuccess && currentCoords && <SuccessModal coords={currentCoords} />}
+      {uploadSuccess && currentCoords && (
+        <SuccessModal coords={currentCoords} />
+      )}
       <div className={"z-10 p-4 shadow-lg"}>
         <h1
           className={`${FONT_LUCKY.className} -mt-2 text-3xl lg:text-4xl text-center text-pink-400`}
@@ -103,13 +105,15 @@ export const UploadPage = () => {
           {"Join the Party!"}
         </h1>
       </div>
-      <div
-        className={`${currentCoords ? "text-gray-500" : "text-gray-300 animate-pulse"} absolute top-4 right-4 flex items-center gap-x-2 w-min whitespace-nowrap`}
-      >
-        {currentCoords ? "Location Found" : "Finding Location..."}
-        {currentCoords && <CheckIcon className="w-6 h-6 stroke-2" />}
-      </div>
-      <div className="flex-1 p-8 bg-pink-100">
+      <div className="relative flex-1 p-8 bg-pink-100">
+        <div
+          className={`${currentCoords ? "bg-pink-500" : "bg-pink-300 animate-pulse"} absolute top-4 right-4 flex items-center gap-x-2 w-min text-sm md:text-lg text-white whitespace-nowrap rounded-full px-4 py-2`}
+        >
+          {currentCoords ? "Location Found" : "Finding Location..."}
+          {currentCoords && (
+            <CheckIcon className="w-4 h-4 md:w-6 md:h-6 stroke-2" />
+          )}
+        </div>
         <form
           onSubmit={(e) => {
             e.preventDefault();
