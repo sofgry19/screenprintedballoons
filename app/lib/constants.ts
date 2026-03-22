@@ -3,7 +3,7 @@ import { Montserrat } from "next/font/google";
 import { GeoCoords } from "../types";
 
 
-export const FONT_LUCKY = Rampart_One({
+export const FONT_RAMPART = Rampart_One({
   weight: "400",
   subsets: ["latin"],
 });

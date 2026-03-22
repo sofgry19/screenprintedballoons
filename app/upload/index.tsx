@@ -10,7 +10,7 @@ import {
   updateLocationSubmissionCount,
   uploadSubmission,
 } from "../supabase/client";
-import { FONT_LUCKY, FONT_MON } from "../lib/constants";
+import { FONT_RAMPART, FONT_MON } from "../lib/constants";
 import { CheckIcon } from "@heroicons/react/24/outline";
 
 export const UploadPage = () => {
@@ -100,7 +100,7 @@ export const UploadPage = () => {
       )}
       <div className={"z-10 p-4 shadow-lg"}>
         <h1
-          className={`${FONT_LUCKY.className} -mt-2 text-3xl lg:text-4xl text-center text-pink-400`}
+          className={`${FONT_RAMPART.className} -mt-2 text-3xl lg:text-4xl text-center text-pink-400`}
         >
           {"Join the Party!"}
         </h1>
