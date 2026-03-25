@@ -27,7 +27,7 @@ export const LocationModal = ({
   }, [location.id]);
 
   return (
-    <div className="z-100 absolute h-screen w-screen">
+    <div className="z-100 absolute h-screen w-screen select-none">
       <div
         className="absolute w-full h-full bg-[rgba(0,0,0,0.5)]"
         onClick={() => onBgClick?.()}
@@ -37,14 +37,20 @@ export const LocationModal = ({
           <>
             <div className="flex justify-between items-center w-full">
               <span className="text-gray-300 text-sm md:text-lg">
-                {"createdAt"}
+                {focusSub.created_at &&
+                  new Date(focusSub.created_at).toLocaleDateString()}
               </span>
               <XMarkIcon
                 className="w-6 h-6 md:w-8 md:h-8 stroke-2 text-gray-400 cursor-pointer"
                 onClick={() => onBgClick?.()}
               />
             </div>
-            <img className="rounded-xl max-h-80" src={focusSub.photo_url} alt="" />
+            <img
+              className="rounded-xl max-h-80"
+              draggable={false}
+              src={focusSub.photo_url}
+              alt=""
+            />
             {focusSub.social && (
               <div className="w-full text-gray-500 italic">{`"${focusSub.social}"`}</div>
             )}
@@ -55,6 +61,7 @@ export const LocationModal = ({
             <img
               key={`photo${i}`}
               className="rounded-md md:rounded-xl cursor-pointer"
+              draggable={false}
               src={e.photo_url}
               alt=""
               onClick={() => {

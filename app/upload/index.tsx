@@ -95,7 +95,7 @@ export const UploadPage = () => {
     <div
       className={`fixed w-full h-full flex flex-col bg-white overflow-hidden ${FONT_MON.className}`}
     >
-      {uploadSuccess && currentCoords && (
+      {!uploadSuccess && currentCoords && (
         <SuccessModal coords={currentCoords} />
       )}
       <div className={"z-10 p-4 shadow-lg"}>
@@ -200,7 +200,7 @@ export const UploadPage = () => {
 };
 
 const SuccessModal = ({ coords }: { coords: GeoCoords }) => (
-  <div className="absolute h-screen w-screen bg-[rgba(0,0,0,0.5)]">
+  <div className="z-100 absolute h-screen w-screen bg-[rgba(0,0,0,0.5)]">
     <div className="absolute left-1/2 top-1/2 -translate-1/2 p-4 rounded-xl flex flex-col gap-y-4 items-center bg-white">
       <div className="text-black">
         {"Upload success! Now go see everyone else's photos!"}

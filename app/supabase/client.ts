@@ -54,6 +54,7 @@ export async function getSubmissionsByLocationId(
   const { data } = await client
     .from("user-submissions")
     .select()
-    .eq("location_id", location_id);
+    .eq("location_id", location_id)
+    .order("created_at", { ascending: false });
   return data as SubmissionData[];
 }
