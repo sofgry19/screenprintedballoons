@@ -95,7 +95,7 @@ export const UploadPage = () => {
     <div
       className={`fixed w-full h-full flex flex-col bg-white overflow-hidden ${FONT_MON.className}`}
     >
-      {!uploadSuccess && currentCoords && (
+      {uploadSuccess && currentCoords && (
         <SuccessModal coords={currentCoords} />
       )}
       <div className={"z-10 p-4 shadow-lg"}>
@@ -123,22 +123,17 @@ export const UploadPage = () => {
         >
           <div className="flex flex-col gap-y-2 w-2/3 lg:w-1/2 xl:w-1/3 mx-auto">
             <div className="aspect-square p-2 rounded-xl bg-white border-4 border-dashed border-pink-500 overflow-hidden flex justify-center items-center">
-              {userPhotoSrc ? (
+              {
                 /* eslint-disable @next/next/no-img-element */
                 <img
-                  src={userPhotoSrc}
+                  src={userPhotoSrc || "/photo-guide.png"}
                   className="max-w-full max-h-full"
+                  style={{
+                    filter: userPhotoSrc ? undefined : "grayscale(100%)",
+                  }}
                   alt=""
                 />
-              ) : (
-                <div>
-                  {isCameraDenied
-                    ? "YEAH WE NEED CAMERA PERMISSIONS"
-                    : isThereNoCamera
-                      ? "GET A CAMERA MAYBE"
-                      : ""}
-                </div>
-              )}
+              }
             </div>
             <div className="w-full flex flex-col items-center">
               <input

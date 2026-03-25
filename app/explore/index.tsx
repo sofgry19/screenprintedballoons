@@ -69,12 +69,12 @@ export const HomePage = ({
           posters={locData ?? []}
         />
         <button
-          className="absolute left-4 bottom-4 p-2 rounded-lg bg-pink-400 opacity-50 hover:opacity-100 cursor-pointer transition-opacity duration-200"
+          className="absolute left-4 bottom-4 p-2 rounded-lg bg-pink-400 cursor-pointer hover:outline-2 hover:outline-white hover:bg-pink-300 transition-color duration-200"
           onClick={() => {
             goHomeRef.current?.click();
           }}
         >
-          <div className="w-min flex items-center gap-x-1 whitespace-nowrap">
+          <div className="w-min flex items-center gap-x-1 text-white whitespace-nowrap">
             <ArrowsPointingInIcon className="w-4 h-4 md:w-6 md:h-6 stroke-2" />
             <span className="px-1 text-sm md:text-lg font-bold">
               {"My Location"}
