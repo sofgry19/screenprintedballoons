@@ -7,7 +7,7 @@ import { ExploreMap } from "./ExploreMap";
 import { LocationModal } from "./LocationModal";
 import { SocialLink } from "./SocialLink";
 import { getLocationData } from "../supabase/client";
-import { FONT_LUCKY, FONT_MON, NYC_COORDS } from "../lib/constants";
+import { FONT_RAMPART, FONT_MON, NYC_COORDS } from "../lib/constants";
 import { ArrowsPointingInIcon } from "@heroicons/react/24/outline";
 
 export const HomePage = ({
@@ -49,7 +49,7 @@ export const HomePage = ({
       )}
       <div className={"z-10 p-4 flex justify-between items-center shadow-lg"}>
         <h1
-          className={`${FONT_LUCKY.className} -mt-2 text-xl md:text-3xl lg:text-4xl text-pink-400`}
+          className={`${FONT_RAMPART.className} -mt-2 text-xl md:text-3xl lg:text-4xl text-pink-400`}
         >
           {"Sofia's Balloon Map"}
         </h1>
