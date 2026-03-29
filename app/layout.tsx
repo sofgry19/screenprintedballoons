@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Sofia's Balloons",
-  description: "We're working on it!",
+  title: "Poster Hunt",
+  description: "Poster Hunt is an interactive public art installation combining screenprinted posters with a web-based camera experience. Each poster in the series features a QR code that invites passersby to pause, scan, and participate in a small act of joy, like taking a photo of themselves with a printed balloon.The project explores how designed moments of playfulness and presence can reintroduce joy into everyday life. It lives at the intersection of analog craft (screenprinting) and digital interaction, asking: what does it feel like to stop and play, even for a moment?",
 };
 
 export default function RootLayout({
