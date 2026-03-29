@@ -51,14 +51,14 @@ export const HomePage = ({
         <h1
           className={`${FONT_RAMPART.className} -mt-2 text-xl md:text-3xl lg:text-4xl text-pink-400`}
         >
-          {"Sofia's Balloon Map"}
+          {"Poster Hunt"}
         </h1>
         <div className="-mx-4 flex justify-evenly items-center divide-x-2 divide-gray-300 text-xs md:text-sm lg:text-lg font-medium text-gray-300">
           <SocialLink
             href="https://www.linkedin.com/in/sofiagry/"
             text="LINKEDIN"
           />
-          <SocialLink href="https://www.instagram.com/astralsofia/" text="IG" />
+          <SocialLink href="https://www.instagram.com/cassio.wip/" text="IG" />
         </div>
       </div>
       <div className="relative flex-1 w-full overflow-hidden">
