@@ -14,39 +14,53 @@ import { FONT_RAMPART, FONT_MON } from "../lib/constants";
 import { CheckIcon } from "@heroicons/react/24/outline";
 
 export const UploadPage = () => {
+  // Reference to the file input element
+  // This allows other elems to call its functions
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  // Location variables
   const [currentCoords, setCurrentCoords] = useState<GeoCoords>();
+  const [nearestPoster, setNearestPoster] = useState<LocationData>();
   useEffect(() => {
+    // Use navigator to get geocoordinates
     navigator.geolocation.getCurrentPosition((pos) => {
       const { latitude, longitude } = pos.coords;
       setCurrentCoords({ latitude, longitude });
+
+      // Once coords are found, fetch all posters
+      // Then find the nearest location match
+      findNearestPoster({ latitude, longitude }).then(
+        (poster: LocationData) => {
+          setNearestPoster(poster);
+        },
+      );
     });
-  }, []);
+  }, []); // This code runs once on page load
+
+  // Input variables
   const [userPhotoSrc, setUserPhotoSrc] = useState<string>("");
   const [userAnswer, setUserAnswer] = useState<string>("");
 
+  // Feedback variables
   const [uploadSuccess, setUploadSuccess] = useState<SubmissionData>();
-
   const [isPending, startTransition] = useTransition();
+  const [isCameraDenied, setIsCameraDenied] = useState<boolean>(false);
+  const [isThereNoCamera, setIsThereNoCamera] = useState<boolean>(false);
+
   const handleClickUploadToMap = () => {
     // If coords weren't found, try again
     // Hopefully this prompts location permission again
-    if (!currentCoords) {
+    if (!currentCoords || !nearestPoster) {
       setCurrentCoords(getGeolocation());
       return;
     }
 
     startTransition(async () => {
-      // Get data of the nearest poster
-      const all_posters = await getLocationData();
-      const nearest_poster = findNearestPoster(currentCoords, all_posters);
-
       // Start building user submission object
       const submissionData: SubmissionData = {
         answer: userAnswer,
         photo_url: "",
-        location_id: nearest_poster.id,
+        location_id: nearestPoster.id,
       };
 
       // Upload image to bucket and get public url
@@ -74,8 +88,8 @@ export const UploadPage = () => {
       // Update submission_count of poster in database
       const { location_id, error: posterUpdateError } =
         await updateLocationSubmissionCount({
-          location_id: nearest_poster.id,
-          submission_count: nearest_poster.submission_count + 1,
+          location_id: nearestPoster.id,
+          submission_count: nearestPoster.submission_count + 1,
         });
       if (posterUpdateError) {
         console.error(posterUpdateError);
@@ -87,9 +101,6 @@ export const UploadPage = () => {
       setUploadSuccess(submissionData);
     });
   };
-
-  const [isCameraDenied, setIsCameraDenied] = useState<boolean>(false);
-  const [isThereNoCamera, setIsThereNoCamera] = useState<boolean>(false);
 
   return (
     <div
@@ -171,7 +182,7 @@ export const UploadPage = () => {
             </div>
           </div>
           <div className="w-full lg:3/4 mx-auto">
-            <label>{"What's one thing that brought you joy today?"}</label>
+            <label>{nearestPoster?.question}</label>
             <textarea
               value={userAnswer}
               disabled={isPending}
@@ -210,14 +221,15 @@ const SuccessModal = ({ coords }: { coords: GeoCoords }) => (
   </div>
 );
 
-const findNearestPoster = (
+const findNearestPoster = async (
   currentCoords: GeoCoords,
-  poster_locations: LocationData[],
-): LocationData => {
-  let min_dist = Number.MAX_VALUE;
-  let closest_loc: LocationData = poster_locations[0];
+): Promise<LocationData> => {
+  const all_posters = await getLocationData();
 
-  poster_locations.map((loc_data: LocationData) => {
+  let min_dist = Number.MAX_VALUE;
+  let closest_loc: LocationData = all_posters[0];
+
+  all_posters.map((loc_data: LocationData) => {
     const dist_squared =
       Math.exp(loc_data.longitude - currentCoords.longitude) +
       Math.exp(loc_data.latitude - currentCoords.latitude);
