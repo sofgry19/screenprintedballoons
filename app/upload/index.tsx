@@ -18,14 +18,38 @@ export const UploadPage = () => {
   // This allows other elems to call its functions
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Feedback variables
+  // Feedback
   const [isPending, startTransition] = useTransition();
   const [isLocationDenied, setIsLocationDenied] = useState<boolean>(false);
   const [isCameraDenied, setIsCameraDenied] = useState<boolean>(false);
-  const [isThereNoCamera, setIsThereNoCamera] = useState<boolean>(false);
+  const [isCameraNotFound, setIsCameraNotFound] = useState<boolean>(false);
   const [uploadSuccess, setUploadSuccess] = useState<SubmissionData>();
+  const tryToUseCamera = (onSuccess?: () => void) => {
+    if (navigator.mediaDevices) {
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: false })
+        .then(() => {
+          setIsCameraDenied(false);
+          setIsCameraNotFound(false);
 
-  // Location variables
+          onSuccess?.();
+        })
+        .catch((e: DOMException) => {
+          let cam_not_found = false;
+          let cam_denied = false;
+
+          if (e.name == "NotFoundError") cam_not_found = true;
+          if (e.name == "NotAllowedError") cam_denied = true;
+
+          setIsCameraNotFound(cam_not_found);
+          setIsCameraDenied(cam_denied);
+        });
+    } else {
+      setIsCameraNotFound(true);
+    }
+  };
+
+  // Location
   const [currentCoords, setCurrentCoords] = useState<GeoCoords>();
   const [nearestPoster, setNearestPoster] = useState<LocationData>();
   const findCoordsAndPoster = () => {
@@ -65,7 +89,7 @@ export const UploadPage = () => {
           },
         );
       },
-      (error: GeolocationPositionError) => {
+      () => {
         setIsLocationDenied(true);
       },
     );
@@ -74,7 +98,7 @@ export const UploadPage = () => {
     findCoordsAndPoster();
   }, []); // This code runs once on page load
 
-  // Input variables
+  // Input
   const [userPhotoSrc, setUserPhotoSrc] = useState<string>("");
   const [userAnswer, setUserAnswer] = useState<string>("");
 
@@ -155,55 +179,68 @@ export const UploadPage = () => {
           }}
           className="h-full flex flex-col justify-center gap-y-8 mt-4 text-black"
         >
-          <div className="flex flex-col gap-y-2 w-2/3 lg:w-1/2 xl:w-1/3 mx-auto">
-            <div className="aspect-square p-2 rounded-xl bg-white border-4 border-dashed border-pink-500 overflow-hidden flex justify-center items-center">
-              {
-                /* eslint-disable @next/next/no-img-element */
-                <img
-                  src={userPhotoSrc || "/photo-guide.png"}
-                  className="max-w-full max-h-full"
-                  style={{
-                    filter: userPhotoSrc ? undefined : "grayscale(100%)",
-                  }}
-                  alt=""
-                />
+          {isCameraNotFound ? (
+            <ErrorModule
+              title={"No Camera Found"}
+              text={
+                "No camera could be found. If there IS one, you probably need to allow camera permissions."
               }
-            </div>
-            <div className="w-full flex flex-col items-center">
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                capture="user"
-                disabled={isPending}
-                onChange={async (e) => {
-                  const file = e.target.files?.[0] as File;
-                  const fileUrl = URL.createObjectURL(file);
-                  setUserPhotoSrc(fileUrl);
-                }}
-                className="hidden"
-              />
-              <button
-                className="w-full rounded-lg p-4 bg-pink-500 text-white disabled:bg-pink-200 disabled:text-pink-300"
-                disabled={isPending}
-                type="button"
-                onClick={() => {
-                  navigator.mediaDevices
-                    .getUserMedia({ video: true, audio: false })
-                    .then((stream: MediaStream) => {
+              buttonText={"Try Again"}
+              onButtonClick={tryToUseCamera}
+            />
+          ) : isCameraDenied ? (
+            <ErrorModule
+              title={"Camera Permissions Denied"}
+              text={
+                "You are going to take a photo of your gorgeous face. We need your camera for that."
+              }
+              buttonText={"Try Again"}
+              onButtonClick={tryToUseCamera}
+            />
+          ) : (
+            <div className="flex flex-col gap-y-2 w-2/3 lg:w-1/2 xl:w-1/3 mx-auto">
+              <div className="aspect-square p-2 rounded-xl bg-white border-4 border-dashed border-pink-500 overflow-hidden flex justify-center items-center">
+                {
+                  /* eslint-disable @next/next/no-img-element */
+                  <img
+                    src={userPhotoSrc || "/photo-guide.png"}
+                    className="max-w-full max-h-full"
+                    style={{
+                      filter: userPhotoSrc ? undefined : "grayscale(100%)",
+                    }}
+                    alt=""
+                  />
+                }
+              </div>
+              <div className="w-full flex flex-col items-center">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  capture="user"
+                  disabled={isPending}
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0] as File;
+                    const fileUrl = URL.createObjectURL(file);
+                    setUserPhotoSrc(fileUrl);
+                  }}
+                  className="hidden"
+                />
+                <button
+                  className="w-full rounded-lg p-4 bg-pink-500 text-white disabled:bg-pink-200 disabled:text-pink-300"
+                  disabled={isPending}
+                  type="button"
+                  onClick={() => {
+                    tryToUseCamera(() => {
                       fileInputRef.current?.click();
-                    })
-                    .catch((e: DOMException) => {
-                      if (e.name == "NotFoundError") setIsThereNoCamera(true);
-                      if (e.name == "NotAllowedError") setIsCameraDenied(true);
-                      else console.error(`An error occurred: ${e}`);
                     });
-                }}
-              >
-                {userPhotoSrc ? "Change Photo?" : "Take a Photo"}
-              </button>
+                  }}
+                >
+                  {userPhotoSrc ? "Change Photo?" : "Take a Photo"}
+                </button>
+              </div>
             </div>
-          </div>
+          )}
           {isLocationDenied ? (
             <ErrorModule
               title={"Location Permissions Denied"}
@@ -243,7 +280,7 @@ export const UploadPage = () => {
           <button
             className="w-full lg:3/4 mx-auto rounded-md p-4 bg-pink-500 text-white disabled:bg-pink-200 disabled:text-pink-300"
             type="submit"
-            disabled={!currentCoords || !userPhotoSrc || isPending}
+            disabled={!nearestPoster || !userPhotoSrc}
           >
             {isPending ? "Uploading..." : "Upload to map!"}
           </button>
