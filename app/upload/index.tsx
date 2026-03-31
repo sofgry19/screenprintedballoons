@@ -203,7 +203,7 @@ export const UploadPage = () => {
                 {
                   /* eslint-disable @next/next/no-img-element */
                   <img
-                    src={userPhotoSrc || "/photo-guide.png"}
+                    src={userPhotoSrc || "/photoguide.jpg"}
                     className="max-w-full max-h-full"
                     style={{
                       filter: userPhotoSrc ? undefined : "grayscale(100%)",
