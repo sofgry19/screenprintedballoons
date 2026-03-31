@@ -11,41 +11,72 @@ import {
   uploadSubmission,
 } from "../supabase/client";
 import { FONT_RAMPART, FONT_MON } from "../lib/constants";
-import { CheckIcon } from "@heroicons/react/24/outline";
+import { ErrorModule } from "./ErrorModule";
 
 export const UploadPage = () => {
   // Reference to the file input element
   // This allows other elems to call its functions
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  // Feedback variables
+  const [isPending, startTransition] = useTransition();
+  const [isLocationDenied, setIsLocationDenied] = useState<boolean>(false);
+  const [isCameraDenied, setIsCameraDenied] = useState<boolean>(false);
+  const [isThereNoCamera, setIsThereNoCamera] = useState<boolean>(false);
+  const [uploadSuccess, setUploadSuccess] = useState<SubmissionData>();
+
   // Location variables
   const [currentCoords, setCurrentCoords] = useState<GeoCoords>();
   const [nearestPoster, setNearestPoster] = useState<LocationData>();
-  useEffect(() => {
-    // Use navigator to get geocoordinates
-    navigator.geolocation.getCurrentPosition((pos) => {
-      const { latitude, longitude } = pos.coords;
-      setCurrentCoords({ latitude, longitude });
+  const findCoordsAndPoster = () => {
+    // This function parses through all posters and returns the nearest one
+    const findNearestPoster = async (
+      currentCoords: GeoCoords,
+    ): Promise<LocationData> => {
+      const all_posters = await getLocationData();
 
-      // Once coords are found, fetch all posters
-      // Then find the nearest location match
-      findNearestPoster({ latitude, longitude }).then(
-        (poster: LocationData) => {
-          setNearestPoster(poster);
-        },
-      );
-    });
+      let min_dist = Number.MAX_VALUE;
+      let closest_loc: LocationData = all_posters[0];
+
+      all_posters.map((loc_data: LocationData) => {
+        const dist_squared =
+          Math.exp(loc_data.longitude - currentCoords.longitude) +
+          Math.exp(loc_data.latitude - currentCoords.latitude);
+
+        if (dist_squared < min_dist) {
+          min_dist = dist_squared;
+          closest_loc = loc_data;
+        }
+      });
+
+      return closest_loc;
+    };
+
+    // Use navigator to get geocoordinates
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        setCurrentCoords({ latitude, longitude });
+
+        // Once coords are found, find nearest poster
+        findNearestPoster({ latitude, longitude }).then(
+          (poster: LocationData) => {
+            setNearestPoster(poster);
+          },
+        );
+      },
+      (error: GeolocationPositionError) => {
+        setIsLocationDenied(true);
+      },
+    );
+  };
+  useEffect(() => {
+    findCoordsAndPoster();
   }, []); // This code runs once on page load
 
   // Input variables
   const [userPhotoSrc, setUserPhotoSrc] = useState<string>("");
   const [userAnswer, setUserAnswer] = useState<string>("");
-
-  // Feedback variables
-  const [uploadSuccess, setUploadSuccess] = useState<SubmissionData>();
-  const [isPending, startTransition] = useTransition();
-  const [isCameraDenied, setIsCameraDenied] = useState<boolean>(false);
-  const [isThereNoCamera, setIsThereNoCamera] = useState<boolean>(false);
 
   const handleClickUploadToMap = () => {
     // If coords weren't found, try again
@@ -116,15 +147,7 @@ export const UploadPage = () => {
           {"Join the Party!"}
         </h1>
       </div>
-      <div className="relative flex-1 p-8 bg-pink-100">
-        <div
-          className={`${currentCoords ? "bg-pink-500" : "bg-pink-300 animate-pulse"} absolute top-4 right-4 flex items-center gap-x-2 w-min text-sm md:text-lg text-white whitespace-nowrap rounded-full px-4 py-2`}
-        >
-          {currentCoords ? "Location Found" : "Finding Location..."}
-          {currentCoords && (
-            <CheckIcon className="w-4 h-4 md:w-6 md:h-6 stroke-2" />
-          )}
-        </div>
+      <div className="relative flex-1 p-4 md:p-8 bg-pink-100">
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -181,17 +204,42 @@ export const UploadPage = () => {
               </button>
             </div>
           </div>
-          <div className="w-full lg:3/4 mx-auto">
-            <label>{nearestPoster?.question}</label>
-            <textarea
-              value={userAnswer}
-              disabled={isPending}
-              className="w-full rounded-md p-2 border-3 border-pink-500 bg-white text-black"
-              onChange={(e) => {
-                setUserAnswer(e.target.value);
+          {isLocationDenied ? (
+            <ErrorModule
+              title={"Location Permissions Denied"}
+              text={
+                "We need to know your location for any of this to work. LET US SEE IT."
+              }
+              buttonText={"Try Again"}
+              onButtonClick={() => {
+                setIsLocationDenied(false);
+                findCoordsAndPoster();
               }}
             />
-          </div>
+          ) : (
+            <div
+              className={`${currentCoords ? "bg-pink-500" : "bg-slate-300 animate-pulse"} w-full lg:3/4 mx-auto mt-4 rounded-2xl text-sm md:text-lg text-white`}
+            >
+              <div
+                className={`-mt-4 h-8 rounded-t-2xl px-4 py-2 ml-auto flex items-center gap-x-2 w-min bg-inherit text-xs md:text-lg text-white whitespace-nowrap`}
+              >
+                {currentCoords ? "Question Found:" : "Finding Question..."}
+              </div>
+              <div className="flex flex-col gap-y-2 px-2 pb-2">
+                <div className="italic md:text-xl">
+                  {nearestPoster?.question ?? "..."}
+                </div>
+                <textarea
+                  value={userAnswer}
+                  disabled={!nearestPoster}
+                  className="w-full rounded-xl p-2 bg-white text-black"
+                  onChange={(e) => {
+                    setUserAnswer(e.target.value);
+                  }}
+                />
+              </div>
+            </div>
+          )}
           <button
             className="w-full lg:3/4 mx-auto rounded-md p-4 bg-pink-500 text-white disabled:bg-pink-200 disabled:text-pink-300"
             type="submit"
@@ -220,25 +268,3 @@ const SuccessModal = ({ coords }: { coords: GeoCoords }) => (
     </div>
   </div>
 );
-
-const findNearestPoster = async (
-  currentCoords: GeoCoords,
-): Promise<LocationData> => {
-  const all_posters = await getLocationData();
-
-  let min_dist = Number.MAX_VALUE;
-  let closest_loc: LocationData = all_posters[0];
-
-  all_posters.map((loc_data: LocationData) => {
-    const dist_squared =
-      Math.exp(loc_data.longitude - currentCoords.longitude) +
-      Math.exp(loc_data.latitude - currentCoords.latitude);
-
-    if (dist_squared < min_dist) {
-      min_dist = dist_squared;
-      closest_loc = loc_data;
-    }
-  });
-
-  return closest_loc;
-};
