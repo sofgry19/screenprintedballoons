@@ -198,8 +198,8 @@ export const UploadPage = () => {
               onButtonClick={tryToUseCamera}
             />
           ) : (
-            <div className="flex flex-col gap-y-2 w-2/3 lg:w-1/2 xl:w-1/3 mx-auto">
-              <div className="aspect-square p-2 rounded-xl bg-white border-4 border-dashed border-pink-500 overflow-hidden flex justify-center items-center">
+            <div className="flex flex-col gap-y-2 w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3 mx-auto">
+              <div className="aspect-square p-2 rounded-2xl bg-white border-4 border-dashed border-pink-500 overflow-hidden flex justify-center items-center">
                 {
                   /* eslint-disable @next/next/no-img-element */
                   <img
@@ -227,7 +227,7 @@ export const UploadPage = () => {
                   className="hidden"
                 />
                 <button
-                  className="w-full rounded-lg p-4 bg-pink-500 text-white disabled:bg-pink-200 disabled:text-pink-300"
+                  className="w-full rounded-2xl p-4 bg-pink-500 text-white disabled:bg-pink-200 disabled:text-pink-300"
                   disabled={isPending}
                   type="button"
                   onClick={() => {
@@ -278,7 +278,7 @@ export const UploadPage = () => {
             </div>
           )}
           <button
-            className="w-full lg:3/4 mx-auto rounded-md p-4 bg-pink-500 text-white disabled:bg-pink-200 disabled:text-pink-300"
+            className="w-full lg:3/4 mx-auto p-4 rounded-2xl text-xl md:text-2xl text-white bg-pink-500 disabled:bg-slate-300 disabled:text-slate-400"
             type="submit"
             disabled={!nearestPoster || !userPhotoSrc}
           >
@@ -291,7 +291,7 @@ export const UploadPage = () => {
 };
 
 const SuccessModal = ({ coords }: { coords: GeoCoords }) => (
-  <div className="z-100 absolute h-screen w-screen bg-[rgba(0,0,0,0.5)]">
+  <div className="z-100 absolute h-full w-full bg-[rgba(0,0,0,0.5)]">
     <div className="absolute left-1/2 top-1/2 -translate-1/2 p-4 rounded-xl flex flex-col gap-y-4 items-center bg-white">
       <div className="text-black">
         {"Upload success! Now go see everyone else's photos!"}

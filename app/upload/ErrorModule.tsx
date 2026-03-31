@@ -22,7 +22,7 @@ export const ErrorModule = ({
     <div className="md:text-xl">{text}</div>
     {onButtonClick && (
       <button
-        className="w-full rounded-lg p-2 bg-purple-200 hover:bg-purple-100 text-purple-800 transition-color duration-200 cursor-pointer"
+        className="w-full rounded-lg p-2 bg-purple-200 hover:bg-purple-100 active:bg-purple-300 text-purple-800 transition-color duration-200 cursor-pointer"
         type="button"
         onClick={onButtonClick}
       >
