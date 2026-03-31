@@ -24,7 +24,7 @@ export const UploadPage = () => {
     });
   }, []);
   const [userPhotoSrc, setUserPhotoSrc] = useState<string>("");
-  const [userSocial, setUserSocial] = useState<string>("");
+  const [userAnswer, setUserAnswer] = useState<string>("");
 
   const [uploadSuccess, setUploadSuccess] = useState<SubmissionData>();
 
@@ -44,7 +44,7 @@ export const UploadPage = () => {
 
       // Start building user submission object
       const submissionData: SubmissionData = {
-        social: userSocial,
+        answer: userAnswer,
         photo_url: "",
         location_id: nearest_poster.id,
       };
@@ -173,11 +173,11 @@ export const UploadPage = () => {
           <div className="w-full lg:3/4 mx-auto">
             <label>{"What's one thing that brought you joy today?"}</label>
             <textarea
-              value={userSocial}
+              value={userAnswer}
               disabled={isPending}
               className="w-full rounded-md p-2 border-3 border-pink-500 bg-white text-black"
               onChange={(e) => {
-                setUserSocial(e.target.value);
+                setUserAnswer(e.target.value);
               }}
             />
           </div>

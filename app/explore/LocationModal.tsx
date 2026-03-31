@@ -51,8 +51,8 @@ export const LocationModal = ({
               src={focusSub.photo_url}
               alt=""
             />
-            {focusSub.social && (
-              <div className="w-full text-gray-500 italic">{`"${focusSub.social}"`}</div>
+            {focusSub.answer && (
+              <div className="w-full text-gray-500 italic">{`"${focusSub.answer}"`}</div>
             )}
           </>
         )}

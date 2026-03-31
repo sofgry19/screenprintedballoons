@@ -11,11 +11,12 @@ export interface LocationData {
   longitude: number;
   latitude: number;
   submission_count: number;
+  question: string;
 }
 
 export interface SubmissionData {
   photo_url: string;
-  social?: string;
+  answer?: string;
   location_id: number;
   created_at?: Timestamp;
 }
