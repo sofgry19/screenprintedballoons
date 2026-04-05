@@ -217,7 +217,7 @@ export const UploadPage = () => {
                   ref={fileInputRef}
                   type="file"
                   accept="image/*"
-                  capture="user"
+                  capture={true}
                   disabled={isPending}
                   onChange={async (e) => {
                     const file = e.target.files?.[0] as File;
