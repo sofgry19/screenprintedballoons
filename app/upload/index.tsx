@@ -27,7 +27,12 @@ export const UploadPage = () => {
   const tryToUseCamera = (onSuccess?: () => void) => {
     if (navigator.mediaDevices) {
       navigator.mediaDevices
-        .getUserMedia({ video: true, audio: false })
+        .getUserMedia({
+          video: {
+            facingMode: "user",
+          },
+          audio: false,
+        })
         .then(() => {
           setIsCameraDenied(false);
           setIsCameraNotFound(false);
