@@ -23,6 +23,9 @@ export const UploadPage = () => {
   const [isLocationDenied, setIsLocationDenied] = useState<boolean>(false);
   const [isCameraDenied, setIsCameraDenied] = useState<boolean>(false);
   const [isCameraNotFound, setIsCameraNotFound] = useState<boolean>(false);
+
+  const [isOtherError, setIsOtherError] = useState<Error>();
+
   const [uploadSuccess, setUploadSuccess] = useState<SubmissionData>();
   const tryToUseCamera = (onSuccess?: () => void) => {
     if (navigator.mediaDevices) {
@@ -45,6 +48,9 @@ export const UploadPage = () => {
 
           if (e.name == "NotFoundError") cam_not_found = true;
           if (e.name == "NotAllowedError") cam_denied = true;
+
+          if (e.name != "NotFoundError" && e.name != "NotAllowedError")
+            setIsOtherError(e);
 
           setIsCameraNotFound(cam_not_found);
           setIsCameraDenied(cam_denied);
@@ -177,6 +183,12 @@ export const UploadPage = () => {
         </h1>
       </div>
       <div className="relative flex-1 p-4 md:p-8 bg-pink-100">
+        {isOtherError && (
+          <div className="bg-yellow-400">
+            <h1>{isOtherError.name}</h1>
+            <p>{isOtherError.message}</p>
+          </div>
+        )}
         <form
           onSubmit={(e) => {
             e.preventDefault();
