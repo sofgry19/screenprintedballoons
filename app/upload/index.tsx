@@ -222,7 +222,7 @@ export const UploadPage = () => {
                   ref={fileInputRef}
                   type="file"
                   accept="image/*"
-                  capture={true}
+                  capture="user"
                   disabled={isPending}
                   onChange={async (e) => {
                     const file = e.target.files?.[0] as File;
@@ -241,7 +241,7 @@ export const UploadPage = () => {
                     });
                   }}
                 >
-                  {userPhotoSrc ? "Change Photo?" : "Take a Photo"}
+                  {userPhotoSrc ? "Change Photo?" : "Take a Photo!"}
                 </button>
               </div>
             </div>
