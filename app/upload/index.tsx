@@ -183,12 +183,21 @@ export const UploadPage = () => {
         </h1>
       </div>
       <div className="relative flex-1 p-4 md:p-8 bg-pink-100">
-        {isOtherError && (
-          <div className="bg-yellow-400">
-            <h1>{isOtherError.name}</h1>
-            <p>{isOtherError.message}</p>
-          </div>
-        )}
+        <div className="bg-yellow-400 w-full p-4 text-black flex flex-col gap-y-2">
+          <h1 className="text-xl underline">Temporary Testing Zone</h1>
+          <input
+            type="file"
+            accept="image/*"
+            capture="user"
+            className="p-1 bg-white w-min"
+          />
+          {isOtherError && (
+            <div className="bg-black p-2 text-white">
+              <h1>{isOtherError.name}</h1>
+              <p>{isOtherError.message}</p>
+            </div>
+          )}
+        </div>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -220,10 +229,10 @@ export const UploadPage = () => {
                 {
                   /* eslint-disable @next/next/no-img-element */
                   <img
-                    src={userPhotoSrc || "/photoguide.jpg"}
+                    src={userPhotoSrc || "/photoguide.png"}
                     className="max-w-full max-h-full"
                     style={{
-                      filter: userPhotoSrc ? undefined : "grayscale(100%)",
+                      filter: userPhotoSrc ? undefined : "brightness(120%)",
                     }}
                     alt=""
                   />
@@ -253,7 +262,7 @@ export const UploadPage = () => {
                     });
                   }}
                 >
-                  {userPhotoSrc ? "Change Photo?" : "Take a Photo!"}
+                  {userPhotoSrc ? "Change Photo?" : "Take a Photo"}
                 </button>
               </div>
             </div>
