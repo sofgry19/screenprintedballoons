@@ -17,6 +17,7 @@ export const UploadPage = () => {
   // Reference to the file input element
   // This allows other elems to call its functions
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const tempFileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Feedback
   const [isPending, startTransition] = useTransition();
@@ -183,14 +184,41 @@ export const UploadPage = () => {
         </h1>
       </div>
       <div className="relative flex-1 p-4 md:p-8 bg-pink-100">
-        <div className="bg-yellow-400 w-full p-4 text-black flex flex-col gap-y-2">
+        <div className="bg-green-400 w-full p-4 text-black flex flex-col gap-y-2">
           <h1 className="text-xl underline">Temporary Testing Zone</h1>
-          <input
-            type="file"
-            accept="image/*"
-            capture="user"
-            className="p-1 bg-white w-min"
-          />
+          <div className="border-2 border-black p-1 flex flex-col gap-y-1">
+            <label>Input Test 1</label>
+            <input
+              type="file"
+              accept="image/*"
+              capture="user"
+              className="p-1 bg-white w-min"
+              onChange={async (e) => {
+                const file = e.target.files?.[0] as File;
+                const fileUrl = URL.createObjectURL(file);
+                setUserPhotoSrc(fileUrl);
+              }}
+            />
+          </div>
+          <div className="border-2 border-black p-1 flex flex-col gap-y-1">
+            <label>Input Test 2</label>
+            <input
+              ref={tempFileInputRef}
+              type="file"
+              accept="image/*"
+              capture="user"
+              className="p-1 bg-white w-min hidden"
+            />
+            <button
+              className="bg-white w-min p-1"
+              onClick={() => {
+                fileInputRef.current?.click();
+              }}
+            >
+              Browse...
+            </button>
+          </div>
+
           {isOtherError && (
             <div className="bg-black p-2 text-white">
               <h1>{isOtherError.name}</h1>
