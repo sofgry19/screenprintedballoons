@@ -38,8 +38,6 @@ export const UploadPage = () => {
           audio: false,
         })
         .then(() => {
-          setDebugMessage("REACHED .THEN");
-
           setIsCameraDenied(false);
           setIsCameraNotFound(false);
         })
@@ -56,7 +54,6 @@ export const UploadPage = () => {
           setIsCameraDenied(cam_denied);
         });
     } else {
-      setDebugMessage("NO MEDIA DEVICES");
       setIsCameraNotFound(true);
     }
   };
@@ -184,7 +181,7 @@ export const UploadPage = () => {
         </h1>
       </div>
       <div className="relative flex-1 p-4 md:p-8 bg-pink-100">
-        <div className="bg-orange-400 w-full p-4 text-black flex flex-col gap-y-2">
+        <div className="bg-red-400 w-full p-4 text-black flex flex-col gap-y-2">
           <h1 className="text-xl underline">Temporary Testing Zone</h1>
           <input
             ref={tempFileInputRef}
@@ -194,7 +191,7 @@ export const UploadPage = () => {
             className="p-1 bg-white w-min hidden"
           />
           <div className="border-2 border-black p-1 flex flex-col gap-y-1">
-            <label>Input Test 4</label>
+            <label>Input Test 5</label>
             <button
               className="bg-white w-min p-1"
               onClick={() => {
@@ -273,9 +270,10 @@ export const UploadPage = () => {
                   disabled={isPending}
                   type="button"
                   onClick={() => {
-                    tryToUseCamera(() => {
+                    tryToUseCamera();
+
+                    if (!isCameraDenied && !isCameraNotFound)
                       fileInputRef.current?.click();
-                    });
                   }}
                 >
                   {userPhotoSrc ? "Change Photo?" : "Take a Photo"}
