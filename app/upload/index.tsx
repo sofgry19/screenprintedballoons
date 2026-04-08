@@ -196,7 +196,7 @@ export const UploadPage = () => {
             <ErrorModule
               title={"Camera Permissions Denied"}
               text={
-                "You are going to take a photo of your gorgeous face. We need your camera for that."
+                "Please allow access to your camera in order to take a photo! Thats the point of the poster!"
               }
               buttonText={"Try Again"}
               onButtonClick={tryToUseCamera}
