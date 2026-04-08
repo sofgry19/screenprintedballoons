@@ -28,7 +28,7 @@ export const UploadPage = () => {
   const [debugMessage, setDebugMessage] = useState<string>("");
 
   const [uploadSuccess, setUploadSuccess] = useState<SubmissionData>();
-  const tryToUseCamera = (onSuccess?: () => void) => {
+  const tryToUseCamera = () => {
     if (navigator.mediaDevices) {
       navigator.mediaDevices
         .getUserMedia({
@@ -42,17 +42,15 @@ export const UploadPage = () => {
 
           setIsCameraDenied(false);
           setIsCameraNotFound(false);
-
-          onSuccess?.();
         })
         .catch((e: DOMException) => {
-          setDebugMessage("REACHED .CATCH");
-
           let cam_not_found = false;
           let cam_denied = false;
 
           if (e.name == "NotFoundError") cam_not_found = true;
           if (e.name == "NotAllowedError") cam_denied = true;
+
+          setDebugMessage(e.name + e.message);
 
           setIsCameraNotFound(cam_not_found);
           setIsCameraDenied(cam_denied);
