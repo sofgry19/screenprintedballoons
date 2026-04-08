@@ -186,7 +186,7 @@ export const UploadPage = () => {
         </h1>
       </div>
       <div className="relative flex-1 p-4 md:p-8 bg-pink-100">
-        <div className="bg-blue-400 w-full p-4 text-black flex flex-col gap-y-2">
+        <div className="bg-orange-400 w-full p-4 text-black flex flex-col gap-y-2">
           <h1 className="text-xl underline">Temporary Testing Zone</h1>
           <input
             ref={tempFileInputRef}
@@ -196,14 +196,14 @@ export const UploadPage = () => {
             className="p-1 bg-white w-min hidden"
           />
           <div className="border-2 border-black p-1 flex flex-col gap-y-1">
-            <label>Input Test 3</label>
+            <label>Input Test 4</label>
             <button
               className="bg-white w-min p-1"
               onClick={() => {
-                tryToUseCamera(() => {
-                  setDebugMessage("REACHED SUCCESS CALLBACK");
+                tryToUseCamera();
+
+                if (!isCameraDenied && !isCameraNotFound)
                   fileInputRef.current?.click();
-                });
               }}
             >
               Browse...
