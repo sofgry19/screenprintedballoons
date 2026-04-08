@@ -17,15 +17,12 @@ export const UploadPage = () => {
   // Reference to the file input element
   // This allows other elems to call its functions
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const tempFileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Feedback
   const [isPending, startTransition] = useTransition();
   const [isLocationDenied, setIsLocationDenied] = useState<boolean>(false);
   const [isCameraDenied, setIsCameraDenied] = useState<boolean>(false);
   const [isCameraNotFound, setIsCameraNotFound] = useState<boolean>(false);
-
-  const [debugMessage, setDebugMessage] = useState<string>("");
 
   const [uploadSuccess, setUploadSuccess] = useState<SubmissionData>();
   const tryToUseCamera = () => {
@@ -47,8 +44,6 @@ export const UploadPage = () => {
 
           if (e.name == "NotFoundError") cam_not_found = true;
           if (e.name == "NotAllowedError") cam_denied = true;
-
-          setDebugMessage(e.name + e.message);
 
           setIsCameraNotFound(cam_not_found);
           setIsCameraDenied(cam_denied);
@@ -181,36 +176,6 @@ export const UploadPage = () => {
         </h1>
       </div>
       <div className="relative flex-1 p-4 md:p-8 bg-pink-100">
-        <div className="bg-red-400 w-full p-4 text-black flex flex-col gap-y-2">
-          <h1 className="text-xl underline">Temporary Testing Zone</h1>
-          <input
-            ref={tempFileInputRef}
-            type="file"
-            accept="image/*"
-            capture="user"
-            className="p-1 bg-white w-min hidden"
-          />
-          <div className="border-2 border-black p-1 flex flex-col gap-y-1">
-            <label>Input Test 5</label>
-            <button
-              className="bg-white w-min p-1"
-              onClick={() => {
-                tryToUseCamera();
-
-                if (!isCameraDenied && !isCameraNotFound)
-                  fileInputRef.current?.click();
-              }}
-            >
-              Browse...
-            </button>
-          </div>
-
-          {debugMessage && (
-            <div className="bg-black p-2 text-white">
-              <p>{debugMessage}</p>
-            </div>
-          )}
-        </div>
         <form
           onSubmit={(e) => {
             e.preventDefault();
