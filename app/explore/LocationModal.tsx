@@ -29,7 +29,7 @@ export const LocationModal = ({
         className="absolute w-full h-full bg-[rgba(0,0,0,0.5)]"
         onClick={() => onBgClick?.()}
       />
-      <div className="absolute left-1/2 top-1/2 -translate-1/2 p-4 rounded-xl flex flex-col gap-y-4 items-center bg-white w-full max-w-[90%] md:max-w-[70%] lg:max-w-[50%] h-fit">
+      <div className="absolute left-1/2 top-1/2 -translate-1/2 p-4 rounded-xl flex flex-col gap-y-4 items-center bg-white w-full max-w-[90%] md:max-w-[70%] lg:max-w-[50%]">
         {focusSub && (
           <>
             <div className="flex justify-between items-center w-full">
@@ -42,7 +42,7 @@ export const LocationModal = ({
                 onClick={() => onBgClick?.()}
               />
             </div>
-            <div className="relative max-h-80">
+            <div className="relative w-full aspect-square">
               <Image
                 className="rounded-xl"
                 fill={true}
@@ -53,21 +53,26 @@ export const LocationModal = ({
               />
             </div>
             {focusSub.answer && (
-              <div className="w-full text-gray-500 italic">{`"${focusSub.answer}"`}</div>
+              <div className="w-full flex flex-col items-start justify-start">
+                <div className="text-gray-500 italic">{location.question}</div>
+                {focusSub.answer && (
+                  <div className="w-full text-white text-xl rounded-lg p-4 bg-gray-300">{`"${focusSub.answer}"`}</div>
+                )}
+              </div>
             )}
           </>
         )}
-        <div className="flex gap-x-4 h-16 md:h-24 overflow-x-scroll">
+        <div className="w-full h-0.5 rounded-full bg-gray-500" />
+        <div className="flex gap-x-2 md:gap-x-4 h-16 md:h-24 overflow-x-scroll w-full">
           {submissions.map((e: SubmissionData, i) => (
-            <div
-              key={`photo${i}`}
-              className={`${focusSub?.photo_url == e.photo_url ? "bg-pink-100" : "bg-white"} aspect-square rounded-xl cursor-pointer border-2 border-pink-300 p-1`}
-            >
-              <div className="relative w-full h-full">
+            <div key={`photo${i}`} className="aspect-square cursor-pointer">
+              <div
+                className={`${focusSub?.photo_url == e.photo_url ? "bg-pink-100 border-pink-300" : "border-white bg-white"} relative w-full h-full border-2 md:border-4 rounded-lg md:rounded-xl overflow-hidden`}
+              >
                 <Image
                   className=""
                   fill={true}
-                  objectFit="contain"
+                  objectFit="cover"
                   draggable={false}
                   src={e.photo_url}
                   alt=""
