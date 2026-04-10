@@ -12,6 +12,7 @@ import {
 } from "../supabase/client";
 import { FONT_RAMPART, FONT_MON } from "../lib/constants";
 import { ErrorModule } from "./ErrorModule";
+import Image from "next/image";
 
 export const UploadPage = () => {
   // Reference to the file input element
@@ -205,15 +206,17 @@ export const UploadPage = () => {
             <div className="flex flex-col gap-y-2 w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3 mx-auto">
               <div className="aspect-square p-2 rounded-2xl bg-white border-4 border-dashed border-pink-500 overflow-hidden flex justify-center items-center">
                 {
-                  /* eslint-disable @next/next/no-img-element */
-                  <img
-                    src={userPhotoSrc || "/photoguide.png"}
-                    className="max-w-full max-h-full"
-                    style={{
-                      filter: userPhotoSrc ? undefined : "brightness(120%)",
-                    }}
-                    alt=""
-                  />
+                  <div className="relative h-full w-full">
+                    <Image
+                      src={userPhotoSrc || "/photoguide.png"}
+                      fill={true}
+                      objectFit="contain"
+                      style={{
+                        filter: userPhotoSrc ? undefined : "brightness(120%)",
+                      }}
+                      alt=""
+                    />
+                  </div>
                 }
               </div>
               <div className="w-full flex flex-col items-center">

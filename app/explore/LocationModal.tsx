@@ -2,10 +2,7 @@ import { useEffect, useState } from "react";
 import { LocationData, SubmissionData } from "../types";
 import { getSubmissionsByLocationId } from "../supabase/client";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-
-// TO DO:
-// - Replace img with next.js Image
-// - Sort retrieved submissions by creation date
+import Image from "next/image";
 
 export const LocationModal = ({
   location,
@@ -45,12 +42,16 @@ export const LocationModal = ({
                 onClick={() => onBgClick?.()}
               />
             </div>
-            <img
-              className="rounded-xl max-h-80"
-              draggable={false}
-              src={focusSub.photo_url}
-              alt=""
-            />
+            <div className="relative max-h-80">
+              <Image
+                className="rounded-xl"
+                fill={true}
+                objectFit="contain"
+                draggable={false}
+                src={focusSub.photo_url}
+                alt=""
+              />
+            </div>
             {focusSub.answer && (
               <div className="w-full text-gray-500 italic">{`"${focusSub.answer}"`}</div>
             )}
@@ -58,16 +59,24 @@ export const LocationModal = ({
         )}
         <div className="flex gap-x-4 h-16 md:h-24 overflow-x-scroll">
           {submissions.map((e: SubmissionData, i) => (
-            <img
+            <div
               key={`photo${i}`}
-              className="rounded-md md:rounded-xl cursor-pointer"
-              draggable={false}
-              src={e.photo_url}
-              alt=""
-              onClick={() => {
-                setFocusSub(e);
-              }}
-            />
+              className={`${focusSub?.photo_url == e.photo_url ? "bg-pink-100" : "bg-white"} aspect-square rounded-xl cursor-pointer border-2 border-pink-300 p-1`}
+            >
+              <div className="relative w-full h-full">
+                <Image
+                  className=""
+                  fill={true}
+                  objectFit="contain"
+                  draggable={false}
+                  src={e.photo_url}
+                  alt=""
+                  onClick={() => {
+                    setFocusSub(e);
+                  }}
+                />
+              </div>
+            </div>
           ))}
         </div>
       </div>
