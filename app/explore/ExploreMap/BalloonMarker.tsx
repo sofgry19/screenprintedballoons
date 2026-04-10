@@ -1,4 +1,4 @@
-import { FONT_RAMPART, FONT_MON } from "@/app/lib/constants";
+import { FONT_MON } from "@/app/lib/constants";
 import { Marker } from "react-map-gl/maplibre";
 
 export const BalloonMarker = ({
