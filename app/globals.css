@@ -24,3 +24,13 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.fade-in-out {
+  background: linear-gradient(
+    90deg,
+    white 0%,
+    transparent 10%,
+    transparent 90%,
+    white 100%
+  );
+}
